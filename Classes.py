@@ -1,4 +1,4 @@
-class bus:
+class Bus:
     def __init__(self, rit, locatie, batterij):
         self.rit = rit
         self.locatie = locatie
