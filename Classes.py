@@ -4,4 +4,4 @@ class Bus:
         self.locatie = locatie
         self.batterij = batterij
     def __repr__(self) -> str:
-        return print(f'Rit: {self.rit}\nLocatie: {self.locatie}\nBatterij: {self.batterij} ')
+        return f'Rit: {self.rit}\nLocatie: {self.locatie}\nBatterij: {self.batterij} '
