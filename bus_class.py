@@ -42,6 +42,8 @@ class bus:
         # nu worden alle eigenschappen mee gegeven, self refereert naar deze class instantie,
         # daarnaast krijgt elke eigenschap dezelfde naam als het argument uit de __init__,
         # hierdoor werkt de class intuitief
+        # met assert forceren we dat alle gegevens in de juiste vorm staan,
+        # op deze manier kunnen we specifieke feedback geven op de fout waar het programma tegen aanloopt
         assert len(tijden) > 0, 'Er zijn geen tijden meegegeven' # controleer of tijden niet leeg is daarna voor de andere gegevens
         assert len(locaties) > 0, 'Er zijn geen tijden meegegeven'
         assert len(activiteit) > 0, 'Er zijn geen activiteiten meegegeven'
@@ -50,7 +52,7 @@ class bus:
         assert omloopnummer > 0, 'Er is geen omloop nummer mee gegeven'
         assert len(batterij) == 2, 'Er zijn niet genoeg batterij waarde meegegeven'
         assert len(tijden) == len(locaties) == len(activiteit) == len(buslijn) == len(energieverbruik), 'De lijsten zijn niet evenlang'
-        
+        # ^^ controleer of de lijsten even lang zijn, zo voorkomen we dat de for loop een error geeft
         self.tijden = tijden
         self.locaties = locaties 
         self.activiteit = activiteit
