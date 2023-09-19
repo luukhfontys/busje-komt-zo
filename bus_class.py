@@ -42,6 +42,15 @@ class bus:
         # nu worden alle eigenschappen mee gegeven, self refereert naar deze class instantie,
         # daarnaast krijgt elke eigenschap dezelfde naam als het argument uit de __init__,
         # hierdoor werkt de class intuitief
+        assert len(tijden) > 0, 'Er zijn geen tijden meegegeven' # controleer of tijden niet leeg is daarna voor de andere gegevens
+        assert len(locaties) > 0, 'Er zijn geen tijden meegegeven'
+        assert len(activiteit) > 0, 'Er zijn geen activiteiten meegegeven'
+        assert len(buslijn) > 0, 'Er zijn geen buslijnen meegegeven'
+        assert len(energieverbruik) > 0, 'Er is geen energieverbruik meegegeven'
+        assert omloopnummer > 0, 'Er is geen omloop nummer mee gegeven'
+        assert len(batterij) == 2, 'Er zijn niet genoeg batterij waarde meegegeven'
+        assert len(tijden) == len(locaties) == len(activiteit) == len(buslijn) == len(energieverbruik), 'De lijsten zijn niet evenlang'
+        
         self.tijden = tijden
         self.locaties = locaties 
         self.activiteit = activiteit
