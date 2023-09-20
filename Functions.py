@@ -72,11 +72,3 @@ def prestatiemaat_speling(df_planning: pd.DataFrame) -> tuple[float, float, floa
     gem_minuten_idle_bus = df_idle_grouped.mean()
     
     return totaal_niet_aangegeven_minuten, totale_idle_minuten, gem_minuten_idle_bus
-    
-    
-
-df_planning = pd.read_excel('omloop planning.xlsx')
-# pres = prestatiemaat_materiaal_minuten(df_planning)
-df_planning = prestatiemaat_materiaal_minuten(df_planning)
-
-x = 1
