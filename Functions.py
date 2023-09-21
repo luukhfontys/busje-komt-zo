@@ -22,8 +22,12 @@ def prestatiemaat_materiaal_minuten(df_planning: pd.DataFrame) -> tuple[float, f
     
     #Hier berekenen we het totale en gemiddelde van de materiaal ritten en stoppen ze in passende variabelen
     totale_minuten = df_materiaal_ritten['Materiaal Rit lengte minuten'].sum()
-    df_materiaal_grouped = df_materiaal_ritten.groupby('omloop nummer')
-    gem_minuten_bus = df_materiaal_grouped['Materiaal Rit lengte minuten'].mean()
+    
+    #df_materiaal_grouped slaat voor elke bus apart de materiaal rit lengte op.
+    df_materiaal_grouped = df_materiaal_ritten.groupby('omloop nummer')['Materiaal Rit lengte minuten'].sum()
+    
+    #Algemene gemiddelde materiaal rit lengte voor alle bussen: 
+    gem_minuten_bus = df_materiaal_grouped.mean()
 
     return totale_minuten, gem_minuten_bus
 
@@ -62,15 +66,9 @@ def prestatiemaat_speling(df_planning: pd.DataFrame) -> tuple[float, float, floa
     totale_idle_minuten = df_idle['idle lengte minuten'].sum()
     
     #Bereken idle tijd per bus.
-    df_idle_grouped = df_idle.groupby('omloop nummer')
-    gem_minuten_idle_bus = df_idle_grouped['idle lengte minuten'].mean()
+    df_idle_grouped = df_idle.groupby('omloop nummer')['idle lengte minuten'].sum()
+    
+    #Bereken algemene gemiddelde idle tijd per bus
+    gem_minuten_idle_bus = df_idle_grouped.mean()
     
     return totaal_niet_aangegeven_minuten, totale_idle_minuten, gem_minuten_idle_bus
-    
-    
-
-df_planning = pd.read_excel('omloop planning.xlsx')
-# pres = prestatiemaat_materiaal_minuten(df_planning)
-df_planning = prestatiemaat_speling(df_planning)
-
-x = 1
