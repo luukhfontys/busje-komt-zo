@@ -39,4 +39,4 @@ df["eindtijd datum"] = pd.to_datetime(df["eindtijd datum"])
 
 df['buslijn'] = df['buslijn'].fillna(999)
 
-fig = px.timeline(df, x_start="starttijd datum", x_end="eindtijd datum", y="omloopnummer")
+fig = px.timeline( x_start="starttijd datum", x_end="eindtijd datum", y="omloopnummer")
