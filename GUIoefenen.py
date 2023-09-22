@@ -2,6 +2,9 @@ import sys
 import pandas as pd
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QTextEdit, QFileDialog, QVBoxLayout, QWidget
 
+
+
+
 class ExcelUploader(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -37,15 +40,42 @@ class ExcelUploader(QMainWindow):
                 df = pd.read_excel(excel_file)
                 self.df = df  # Store the DataFrame in self.df
                 self.text_edit.setPlainText(str(df))
-                print(df)
+                
+
+
+
+
+
+
+
+                ## HIER KOMT DE REST VAN DE CODE WAARIN WE ZOOI SJOUWEN
+
+
+
+
+
+
+
+                return df
             except Exception as e:
                 self.text_edit.setPlainText(f"Error loading Excel file: {str(e)}")
 
-def main():
+    
+def main_Excelupload():
     app = QApplication(sys.argv)
     window = ExcelUploader()
     window.show()
     sys.exit(app.exec_())
 
 if __name__ == "__main__":
-    main()
+    main_Excelupload()
+
+print(ExcelUploader.df)
+    
+
+
+
+
+
+
+
