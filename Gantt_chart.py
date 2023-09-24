@@ -3,7 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
 import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
 import pandas as pd
 import plotly.express as px
 
@@ -39,4 +38,5 @@ df["eindtijd datum"] = pd.to_datetime(df["eindtijd datum"])
 
 df['buslijn'] = df['buslijn'].fillna(999)
 
-fig = px.timeline( x_start="starttijd datum", x_end="eindtijd datum", y="omloopnummer")
+fig = px.timeline( x_start=df["starttijd datum"], x_end=df["eindtijd datum"], y=df["omloopnummer"])
+print(df)
