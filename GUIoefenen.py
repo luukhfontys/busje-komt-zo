@@ -40,7 +40,7 @@ class ExcelUploader(QMainWindow):
                 df = pd.read_excel(excel_file)
                 self.df = df  # Store the DataFrame in self.df
                 self.text_edit.setPlainText(str(df))
-                
+
 
 
 
@@ -54,9 +54,6 @@ class ExcelUploader(QMainWindow):
 
 
 
-
-
-                return df
             except Exception as e:
                 self.text_edit.setPlainText(f"Error loading Excel file: {str(e)}")
 
@@ -70,7 +67,7 @@ def main_Excelupload():
 if __name__ == "__main__":
     main_Excelupload()
 
-print(ExcelUploader.df)
+
     
 
 
