@@ -38,5 +38,5 @@ df["eindtijd datum"] = pd.to_datetime(df["eindtijd datum"])
 
 df['buslijn'] = df['buslijn'].fillna(999)
 
-fig = px.timeline( x_start=df["starttijd datum"], x_end=df["eindtijd datum"], y=df["omloopnummer"])
-print(df)
+fig = px.timeline( x_start=df["starttijd datum"], x_end=df["eindtijd datum"], y=df["omloop nummer"], color = df['activiteit'])
+fig.show()
