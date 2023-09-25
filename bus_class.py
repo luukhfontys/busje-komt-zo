@@ -103,10 +103,11 @@ class bus:
                     gesplite_eindtijd = vorige_eindtijd.split(':') # ze zijn opgeslagen als str dus gebruiken we split
                     gesplite_begintijd = huidige_starttijd.split(':') # datetime werkt hier niet omdat datetime
                                                                       # alleen negatieve waarde kan hebben voor dagen
+                    
                     if (
-                        (gesplite_eindtijd[0]%24 > gesplite_begintijd[0]%24) or
-                        (gesplite_eindtijd[0] == gesplite_begintijd[0] and
-                        gesplite_eindtijd[1] > gesplite_begintijd[1])
+                        (int(gesplite_eindtijd[0])%24 > int(gesplite_begintijd[0])%24) or
+                        (int(gesplite_eindtijd[0]) == int(gesplite_begintijd[0]) and
+                        int(gesplite_eindtijd[1]) > int(gesplite_begintijd[1]))
                         ): # we checken 2 scenario's:
                            # - is het uur van de vorige tijd later dan de huidige modulo 24 om met de nacht rekening te houden
                            # - zijn ze hetzelfde checken we om de zelfde manier de minuten
