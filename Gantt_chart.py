@@ -1,6 +1,4 @@
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
 from datetime import datetime
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -36,7 +34,19 @@ df['lengte'] = lengte
 df["starttijd datum"] = pd.to_datetime(df["starttijd datum"])
 df["eindtijd datum"] = pd.to_datetime(df["eindtijd datum"])
 
-df['buslijn'] = df['buslijn'].fillna(999)
+df.drop(df[df['activiteit'] == 'idle'].index, inplace = True)
 
-fig = px.timeline( x_start=df["starttijd datum"], x_end=df["eindtijd datum"], y=df["omloop nummer"], color = df['activiteit'])
+for index, row in df.iterrows():
+    if row['activiteit'] == 'dienst rit':
+        if row['buslijn'] == '400' or '401':
+            value = row['buslijn']
+            df.loc[index, ['activiteit']] = [value]
+
+
+y_label = {'omloop nummer': 'Omloop nummer'}
+
+colors = {"materiaal rit": "forestgreen", "opladen": "darkgray", 401: "cornflowerblue", 400.0: "steelblue"}
+
+fig = px.timeline(df, x_start="starttijd datum", x_end="eindtijd datum", y="omloop nummer", color = 'activiteit', title = "Gantt Chart", labels = y_label, color_discrete_map = colors)
+fig.update_layout(xaxis_title="Date")
 fig.show()
