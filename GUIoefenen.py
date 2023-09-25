@@ -1,8 +1,8 @@
 import sys
 import pandas as pd
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QTextEdit, QFileDialog, QVBoxLayout, QWidget
-
-
+from bus_class import bus
+from Functie_to_class_format import to_class_format
 
 
 class ExcelUploader(QMainWindow):
@@ -40,10 +40,18 @@ class ExcelUploader(QMainWindow):
                 df = pd.read_excel(excel_file)
                 self.df = df  # Store the DataFrame in self.df
                 self.text_edit.setPlainText(str(df))
+                batterij = (100,10)
+                bussen = []
+                for omloop in df.loc[:,'omloop nummer']:
+                    locaties, tijden, activiteiten, buslijnen, energieverbruik = to_class_format(df,omloop)
+                    bussen.append(bus(tijden=tijden, locaties=locaties,
+                                      activiteit=activiteiten,buslijn=buslijnen,
+                                      energieverbruik=energieverbruik, omloopnummer=omloop,
+                                      batterij=batterij
+                                      ))
+                    
+                                    
                 
-
-
-
 
 
 
@@ -54,9 +62,6 @@ class ExcelUploader(QMainWindow):
 
 
 
-
-
-                return df
             except Exception as e:
                 self.text_edit.setPlainText(f"Error loading Excel file: {str(e)}")
 
@@ -70,7 +75,7 @@ def main_Excelupload():
 if __name__ == "__main__":
     main_Excelupload()
 
-print(ExcelUploader.df)
+
     
 
 
