@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import datetime
 
 def format_check_omloop(df_planning):
     header_format = ['startlocatie', 'eindlocatie', 'starttijd', 
@@ -7,17 +8,30 @@ def format_check_omloop(df_planning):
                      'energieverbruik', 'starttijd datum',
                      'eindtijd datum', 'omloop nummer']
     df_headers = df_planning.columns.values[1:].tolist()
-    type_format = [str, str, str, str, str, (np.int64, np.float64), (np.int64, np.float64), pd.Timestamp, pd.Timestamp, (int, float, np.int64)]
-    df_types = df_planning.iloc[1][1:]
+    type_format = [str, str, str, str, str, (np.int64, np.float64), (np.int64, np.float64), (pd.Timestamp, datetime.datetime), (pd.Timestamp, datetime.datetime), (int, float, np.int64)]
+    #df_types = df_planning.iloc[0][1:]
 
+    header_check = False
     if header_format == df_headers: header_check = True
 
     type_check = True
-    for i in range(len(type_format)):
-        if not isinstance(df_types[i], type_format[i]):
-            type_check = False
-            
-    return all([header_check, type_check])
+    foute_datapunten = [] #[(rij, kolom), (rij, kolom), ... ]
+    
+    if header_check:
+        for i in range(df_planning.shape[0]):
+            df_types = df_planning.iloc[i][1:]
+            for j in range(len(df_types)):
+                if not isinstance(df_types[j], type_format[j]):
+                    print(df_types[j], type_format[j])
+                    type_check = False
+                    foute_datapunten.append((i, j))
+    
+    if header_check:
+        return header_check, type_check, foute_datapunten
+    else:
+        return header_check, True, []
+# df_omloop = pd.read_excel('omloop planning copy.xlsx')
+# format_check = format_check_omloop(df_omloop)
 
 def prestatiemaat_materiaal_minuten(df_planning: pd.DataFrame) -> tuple[float, float]:
     """
