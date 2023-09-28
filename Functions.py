@@ -1,5 +1,18 @@
 import pandas as pd
 
+def format_check_omloop(df_planning):
+    header_format = ['startlocatie', 'eindlocatie', 'starttijd', 
+                     'eindtijd','activiteit', 'buslijn', 
+                     'energieverbruik', 'starttijd datum',
+                     'eindtijd datum', 'omloop nummer']
+    df_headers = df_planning.columns.values[1:]
+    type_format = 
+    df_types
+
+    if header_format == df_headers: header_check = True
+
+    if type_format == df_types:
+
 def prestatiemaat_materiaal_minuten(df_planning: pd.DataFrame) -> tuple[float, float]:
     """
     Deze functie neemt de omloop planning in vorm van pandas dataframe en output vervolgens

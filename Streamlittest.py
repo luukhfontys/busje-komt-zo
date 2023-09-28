@@ -14,7 +14,7 @@ if st.button('Test'):
     st.write('Test2')
 
 st_omloop = st.file_uploader('Upload omloop planning', type=['xlsx'])
-    
+
 if st_omloop is not None:
     st.write(st_omloop.name)
     df_omloop = pd.read_excel(st_omloop)
