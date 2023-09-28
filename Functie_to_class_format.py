@@ -1,5 +1,21 @@
 import pandas as pd
+from bus_class import bus
 
+def to_class(df:pd.DataFrame, batterij_waarde:tuple[float,float]=(100,10)):
+    batterij = batterij_waarde
+    bussen = []
+    for omloop in range(1,max(df.loc[:,'omloop nummer'])):
+        locaties, tijden, activiteiten, buslijnen, energieverbruik = to_class_format(df,omloop)
+        bussen.append(bus(tijden=tijden,
+                          locaties=locaties,
+                          activiteit=activiteiten,
+                          buslijn=buslijnen,
+                          energieverbruik=energieverbruik, 
+                          omloopnummer=omloop,
+                          batterij=batterij
+                          ))
+    return bussen
+        
 def to_class_format(df:pd.DataFrame, omloop:int):
     df_omloop = df[df['omloop nummer'] == omloop]
     df_omloop.reset_index(drop=True, inplace=True)
