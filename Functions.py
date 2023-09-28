@@ -1,17 +1,23 @@
 import pandas as pd
+import numpy as np
 
 def format_check_omloop(df_planning):
     header_format = ['startlocatie', 'eindlocatie', 'starttijd', 
                      'eindtijd','activiteit', 'buslijn', 
                      'energieverbruik', 'starttijd datum',
                      'eindtijd datum', 'omloop nummer']
-    df_headers = df_planning.columns.values[1:]
-    type_format = 
-    df_types
+    df_headers = df_planning.columns.values[1:].tolist()
+    type_format = [str, str, str, str, str, (np.int64, np.float64), (np.int64, np.float64), pd.Timestamp, pd.Timestamp, (int, float, np.int64)]
+    df_types = df_planning.iloc[1][1:]
 
     if header_format == df_headers: header_check = True
 
-    if type_format == df_types:
+    type_check = True
+    for i in range(len(type_format)):
+        if not isinstance(df_types[i], type_format[i]):
+            type_check = False
+            
+    return all([header_check, type_check])
 
 def prestatiemaat_materiaal_minuten(df_planning: pd.DataFrame) -> tuple[float, float]:
     """
