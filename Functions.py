@@ -41,7 +41,7 @@ def prestatiemaat_materiaal_minuten(df_planning: pd.DataFrame) -> tuple[float, f
     """
     #Filteren op alleen de materiaal ritten
     df_materiaal_ritten = df_planning[df_planning['activiteit'] == 'materiaal rit']
-
+    
     #Convert de datum columns naar een datetime object m.b.v. pandas
     df_materiaal_ritten['starttijd datum'] = pd.to_datetime(df_materiaal_ritten['starttijd datum'])
     df_materiaal_ritten['eindtijd datum'] = pd.to_datetime(df_materiaal_ritten['eindtijd datum'])
