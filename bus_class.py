@@ -89,9 +89,8 @@ class bus:
             ## batterij check
             if self.batterijhuidig <= self.batterijstart[1]: # index 1 is de min waarde van de batterij uit batterijstart
                 self.onderbouwing = (
-                    f'''batterij is onder het minimum gegaan bij activiteit {self.activiteit[rit]}
-                    tussen de tijden {self.tijden[rit][0]} en {self.tijden[rit][1]}
-                    voor omloop {self.omloopnummer}'''
+                    f'''Battery of bus {self.omloopnummer} went below the minimum threshold between {self.tijden[rit][0]} and {self.tijden[rit][1]}
+                    '''
                     ) # onderbouwing voor invalide planning
                 return 0 # returnen nul zodat er gesorteerd kan worden
             ## Tijd check
@@ -111,7 +110,7 @@ class bus:
                         ): # we checken 2 scenario's:
                            # - is het uur van de vorige tijd later dan de huidige modulo 24 om met de nacht rekening te houden
                            # - zijn ze hetzelfde checken we om de zelfde manier de minuten
-                        self.onderbouwing = f'bus {self.omloopnummer} is te laat terug van rit {rit-1} om rit {rit} te rijden'
+                        self.onderbouwing = f'bus {self.omloopnummer} returns to late from ride {rit-1} to make ride {rit} in time'
                         return 0
             ## minimale laad tijd check
             if self.activiteit[rit] == 'opladen': # checken of we moeten controleren
@@ -121,8 +120,8 @@ class bus:
                 eindtijd_datetime = datetime.strptime(eindtijd, "%H:%M:%S")
                 delta = eindtijd_datetime - begintijd_datetime # timedelta object crëeeren
                 minutes = (delta.total_seconds())/60 # aantal minuten bepalen
-                if minutes <= 15: # controle voor min tijd
-                    self.onderbouwing = f'bus {self.omloopnummer} laad niet genoeg op gedurende rit {rit + 1}'
+                if minutes <= 15: # controle voor minimum tijd
+                    self.onderbouwing = f'bus {self.omloopnummer} charges for to little time during ride {rit + 1}'
                     return 0
             else:
                 continue
