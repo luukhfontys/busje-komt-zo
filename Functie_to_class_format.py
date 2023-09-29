@@ -46,12 +46,14 @@ def return_invalid_busses(bussen:list[object]):
     bussen.sort()
     itteration = 0
     done = False
+    invalide_bussen = []
     while not done and itteration < len(bussen):
         bus = bussen[itteration]
         itteration +=1
         if bus.valide == 0:
             # hier kunnen we de write output van streamlit gebruiken
-            print(bus.onderbouwing)
+            invalide_bussen.append(bus.onderbouwing)
         elif bus.valide == 1:
             done = True 
     
+    return invalide_bussen

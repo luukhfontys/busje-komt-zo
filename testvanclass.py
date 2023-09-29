@@ -6,7 +6,7 @@ df = pd.read_excel('omloop planning.xlsx')
 
 bussen = to_class(df=df,batterij_waarde=(251,10))
 
-return_invalid_busses(bussen)
+onderbouwingen = return_invalid_busses(bussen)
 
 ##### dingen om te doen:
 ### local vs global
