@@ -5,6 +5,11 @@ import plotly.express as px
 from Functions import format_check_omloop
 from Gantt_chart import Gantt_chart
 
+st.set_page_config(
+    page_title='Busje komt zo',
+    page_icon="🚌"
+)
+
 #Start pagina en session_state variabelen initializen
 if 'page' not in st.session_state:
     st.session_state['page'] = 'Upload and validate'
