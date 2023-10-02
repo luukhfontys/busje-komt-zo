@@ -7,7 +7,8 @@ from Gantt_chart import Gantt_chart
 
 st.set_page_config(
     page_title='Busje komt zo',
-    page_icon="🚌"
+    page_icon="🚌",
+    menu_items={'About': 'https://github.com/luukhfontys/busje-komt-zo'}
 )
 
 #Start pagina en session_state variabelen initializen
