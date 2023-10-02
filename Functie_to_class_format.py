@@ -41,3 +41,19 @@ def to_class_format(df:pd.DataFrame, omloop:int):
         energieverbruik.append(energieverbruik_van_rit[index])  
         
     return locaties, tijden, activiteiten, buslijnen, energieverbruik
+
+def return_invalid_busses(bussen:list[object]):
+    bussen.sort()
+    itteration = 0
+    done = False
+    invalide_bussen = []
+    while not done and itteration < len(bussen):
+        bus = bussen[itteration]
+        itteration +=1
+        if bus.valide == 0:
+            # hier kunnen we de write output van streamlit gebruiken
+            invalide_bussen.append(bus.onderbouwing)
+        elif bus.valide == 1:
+            done = True 
+    
+    return invalide_bussen
