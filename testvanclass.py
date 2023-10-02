@@ -4,10 +4,11 @@ from Functie_to_class_format import to_class, return_invalid_busses
 
 df = pd.read_excel('omloop planning.xlsx')
 
-bussen = to_class(df=df,batterij_waarde=(251,10))
+#bussen = to_class(df=df,batterij_waarde=(251,10))
+bussen = to_class(df=df)
 
 onderbouwingen = return_invalid_busses(bussen)
-
+print(onderbouwingen)
 ##### dingen om te doen:
 ### local vs global
 ### local

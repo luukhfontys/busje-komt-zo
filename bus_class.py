@@ -89,8 +89,7 @@ class bus:
             ## batterij check
             if self.batterijhuidig <= self.batterijstart[1]: # index 1 is de min waarde van de batterij uit batterijstart
                 self.onderbouwing = (
-                    f'''Battery of bus {self.omloopnummer} went below the minimum threshold between {self.tijden[rit][0]} and {self.tijden[rit][1]}
-                    '''
+                    f'''Battery of bus {self.omloopnummer} went below the minimum threshold between {self.tijden[rit][0]} and {self.tijden[rit][1]}'''
                     ) # onderbouwing voor invalide planning
                 return 0 # returnen nul zodat er gesorteerd kan worden
             ## Tijd check
