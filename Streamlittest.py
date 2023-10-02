@@ -61,8 +61,8 @@ def charts_page():
             st.write('Editable dataframe:')
             st.data_editor(df_omloop, num_rows='dynamic')
             
-            onderbouwingenstr = '\n'.join(onderbouwingen)
-            st.error(f'{onderbouwingenstr}')
+            for error_message in onderbouwingen:
+                st.error(error_message)
             
             if st.button('Go back'):
                 st.session_state['page'] = 'Upload and validate'
