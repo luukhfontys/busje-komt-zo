@@ -8,7 +8,7 @@ df = pd.read_excel('omloop planning.xlsx')
 bussen = to_class(df=df)
 
 onderbouwingen = return_invalid_busses(bussen)
-print(onderbouwingen)
+ 3print(onderbouwingen)
 ##### dingen om te doen:
 ### local vs global
 ### local
