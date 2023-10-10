@@ -23,17 +23,19 @@ if 'page' not in st.session_state:
 def upload_validate_page():
     st.title('Excel invoer')
     st_omloop = st.file_uploader('Upload omloop planning', type=['xlsx'])
-
+    
     if st_omloop is not None:
-        df_omloop = pd.read_excel(st_omloop)
+        df_omloop = pd.read_excel(st_omloop, index_col=0)
+        st.dataframe(df_omloop)
 
-        bussen = to_class(df=df_omloop)
-        onderbouwingen = return_invalid_busses(bussen)
         format_check = format_check_omloop(df_omloop)
-        st.session_state['onderbouwingen'] = onderbouwingen
+        
 
         if all(format_check[:2]):
             
+            bussen = to_class(df=df_omloop)
+            onderbouwingen = return_invalid_busses(bussen)
+            st.session_state['onderbouwingen'] = onderbouwingen
             st.success('Data upload successful, proceed to the next page.')
             st.write(st_omloop.name)
             st.dataframe(df_omloop, height=200)
@@ -46,9 +48,10 @@ def upload_validate_page():
         else:
             st.error(f"Error: Your data does not meet the required format.")
             if not format_check[0]:
-                st.error("Headers are not in format: [index, 'startlocatie', 'eindlocatie', 'starttijd','eindtijd','activiteit', 'buslijn', 'energieverbruik', 'starttijd datum','eindtijd datum', 'omloop nummer']")
+                st.error("Headers are not in format: [index, 'startlocatie', 'eindlocatie', 'starttijd', 'eindtijd', 'activiteit', 'buslijn', 'energieverbruik', 'starttijd datum', 'eindtijd datum', 'omloop nummer']")
             if not format_check[1]:
-                st.error(f'The following (row, colum) data points are not of the right type: {format_check[2]}')
+                st.error(f'The following (row, colum) data points are not of the right type: {format_check[2]}\nSee marked dataframe below: ')
+                st.dataframe(format_check[3])
 
 def charts_page():
     st.title('Grafieken')
