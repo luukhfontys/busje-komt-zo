@@ -30,7 +30,7 @@ def format_check_omloop(df_planning):
                     df_planning_error_cells.iat[i, j] = 'background-color: red'
     
     df_planning_errors = df_planning.style.apply(lambda x: df_planning_error_cells, axis=None)
-    print(df_planning_errors)
+    
     if header_check:
         return header_check, type_check, foute_datapunten, df_planning_errors
     else:

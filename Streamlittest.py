@@ -23,6 +23,7 @@ if 'page' not in st.session_state:
 def upload_validate_page():
     st.title('Excel invoer')
     st_omloop = st.file_uploader('Upload omloop planning', type=['xlsx'])
+    batterij_waarde_slider = st.slider('Selecteer een start waarde voor de batterij', 0, 600, 300)
     
     if st_omloop is not None:
         df_omloop = pd.read_excel(st_omloop, index_col=0)
@@ -33,7 +34,7 @@ def upload_validate_page():
 
         if all(format_check[:2]):
             
-            bussen = to_class(df=df_omloop)
+            bussen = to_class(df = df_omloop, batterij_waarde = (batterij_waarde_slider, batterij_waarde_slider*0.1))
             onderbouwingen = return_invalid_busses(bussen)
             st.session_state['onderbouwingen'] = onderbouwingen
             st.success('Data upload successful, proceed to the next page.')
