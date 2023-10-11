@@ -48,6 +48,8 @@ def upload_validate_page():
                 st.session_state['df_omloop'] = df_omloop
                 st.session_state['format_check'] = format_check
                 st.session_state['page'] = 'Charts'
+
+             
             
         else:
             st.error(f"Error: Your data does not meet the required format.")
