@@ -10,7 +10,8 @@ from Functie_to_class_format import to_class, return_invalid_busses
 st.set_page_config(
     page_title='Busje komt zo',
     page_icon="🚌",
-    menu_items={'About': 'https://github.com/luukhfontys/busje-komt-zo'}
+    menu_items={'About': 'https://github.com/luukhfontys/busje-komt-zo'},
+    layout='wide'
 )
 
 #Start pagina en session_state variabelen initializen
@@ -23,11 +24,10 @@ if 'page' not in st.session_state:
 def upload_validate_page():
     st.title('Excel invoer')
     st_omloop = st.file_uploader('Upload omloop planning', type=['xlsx'])
-    batterij_waarde_slider = st.slider('Selecteer een start waarde voor de batterij', 0, 600, 300)
+    batterij_waarde_slider = st.slider('Selecteer een start waarde voor de batterij', 255, 285, 270)
     
     if st_omloop is not None:
         df_omloop = pd.read_excel(st_omloop, index_col=0)
-        st.dataframe(df_omloop)
 
         format_check = format_check_omloop(df_omloop)
         
@@ -51,7 +51,7 @@ def upload_validate_page():
             if not format_check[0]:
                 st.error("Headers are not in format: [index, 'startlocatie', 'eindlocatie', 'starttijd', 'eindtijd', 'activiteit', 'buslijn', 'energieverbruik', 'starttijd datum', 'eindtijd datum', 'omloop nummer']")
             if not format_check[1]:
-                st.error(f'The following (row, colum) data points are not of the right type: {format_check[2]}\nSee marked dataframe below: ')
+                st.error(f'The following (row, colum) data points are not of the right type: {format_check[2]} \n For cell errors: see marked dataframe below: ')
                 st.dataframe(format_check[3])
 
 def charts_page():
