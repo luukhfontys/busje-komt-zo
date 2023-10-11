@@ -2,7 +2,6 @@ import pandas as pd
 from bus_class import bus
 
 def to_class(df:pd.DataFrame, batterij_waarde:tuple[float,float]=(270,27.0)): #hier slider maken voor streamlit
-    batterij = batterij_waarde
     bussen = []
     for omloop in range(1,max(df.loc[:,'omloop nummer'])):
         locaties, tijden, activiteiten, buslijnen, energieverbruik = to_class_format(df,omloop)
@@ -12,7 +11,7 @@ def to_class(df:pd.DataFrame, batterij_waarde:tuple[float,float]=(270,27.0)): #h
                           buslijn=buslijnen,
                           energieverbruik=energieverbruik, 
                           omloopnummer=omloop,
-                          batterij=batterij
+                          batterij=batterij_waarde
                           ))
     return bussen
         

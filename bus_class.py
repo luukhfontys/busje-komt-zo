@@ -66,9 +66,10 @@ class bus:
                                 # als de bus zijn rit kan rijden blijf deze leef, maar deze moet bestaan om er naar te refereren
         self.valide = self.check_bus() # hier roepen we de functie check bus aan om te controleren of deze rit valide is,
                                        # dit gebeurt na het mee geven van de eigenschappen zodat we deze kunnen gebruiken
-        
         # meegegeven gegevens staan beschreven in de class docstring #
-        
+        if self.valide == 1:
+            self.materiaal_minuten = self.type_minuten('materiaal rit')
+            self.idle_minuten = self.type_minuten('idle')
         
     def check_bus(self)->int:
         '''
@@ -115,10 +116,11 @@ class bus:
             if self.activiteit[rit] == 'opladen': # checken of we moeten controleren
                 begintijd = self.tijden[rit][0]
                 eindtijd = self.tijden[rit][1]
-                begintijd_datetime = datetime.strptime(begintijd, "%H:%M:%S") # tijd omzetten naar datetime constructie
-                eindtijd_datetime = datetime.strptime(eindtijd, "%H:%M:%S")
-                delta = eindtijd_datetime - begintijd_datetime # timedelta object crëeeren
-                minutes = (delta.total_seconds())/60 # aantal minuten bepalen
+                # begintijd_datetime = datetime.strptime(begintijd, "%H:%M:%S") # tijd omzetten naar datetime constructie
+                # eindtijd_datetime = datetime.strptime(eindtijd, "%H:%M:%S")
+                # delta = eindtijd_datetime - begintijd_datetime # timedelta object crëeeren
+                # minutes = (delta.total_seconds())/60 # aantal minuten bepalen
+                minutes = self.date_time_diff(begintijd=begintijd, eindtijd=eindtijd)
                 if minutes <= 15: # controle voor minimum tijd
                     self.onderbouwing = f'bus {self.omloopnummer} charges for to little time during ride {rit + 1}'
                     return 0
@@ -134,4 +136,28 @@ class bus:
         In deze functie sorteren wij de class objecten op de uitkomst van checkbus
         '''
         return self.valide < other.valide # aangeven welke waarde binnen de class vergeleken dient te worden
+
+    def date_time_diff(self, begintijd:str,eindtijd:str):
+        ''' geeft de het tijd verschil in minuten terug
+        '''
+        begintijd_datetime = datetime.strptime(begintijd, "%H:%M:%S") # tijd omzetten naar datetime constructie
+        eindtijd_datetime = datetime.strptime(eindtijd, "%H:%M:%S")
+        delta = eindtijd_datetime - begintijd_datetime # timedelta object crëeeren
+        minutes = (delta.total_seconds())/60 # aantal minuten bepalen
+        return minutes
     
+    def type_minuten(self, type_string:str):
+        ''' Geeft voor een bepaald type rit het totaal aantal minuten terug
+        '''
+        minuten = 0
+        for rit in range(len(self.tijden)):
+            if self.activiteit[rit] == type_string:
+                begintijd = self.tijden[rit][0]
+                eindtijd = self.tijden[rit][1]
+                minuten += self.date_time_diff(begintijd=begintijd,eindtijd=eindtijd)        
+        return minuten
+    
+    def force_calc(self):
+        self.materiaal_minuten = self.type_minuten('materiaal rit')
+        self.idle_minuten = self.type_minuten('idle')
+        return      
