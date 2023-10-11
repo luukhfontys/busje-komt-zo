@@ -14,6 +14,7 @@ from Functie_to_class_format import to_class, return_invalid_busses
 st.set_page_config(
      page_title='Bussie comes soon',
      layout="wide",
+     page_icon="🚌",
      initial_sidebar_state="expanded",
 )
 
