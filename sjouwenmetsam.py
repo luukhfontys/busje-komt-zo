@@ -48,7 +48,9 @@ def upload_validate_page():
             if st.button('Next'):
                 st.session_state['df_omloop'] = df_omloop
                 st.session_state['format_check'] = format_check
-                st.session_state['page'] = 'Charts'
+                st.session_state['page'] = 'Overview'
+
+            
 
              
             
@@ -61,46 +63,67 @@ def upload_validate_page():
                 st.dataframe(format_check[3])
 
 
+if st.session_state['page'] == 'Overview' or 'Import New Excelfile' or 'Bus Specific Schedule' or 'Gantt Chart' or 'Performance Indicators':
+    selected_page = st.sidebar.selectbox(
+        "Select a page",
+        ('Upload and validate', 'Overview', 'Import New Excelfile', 'Bus Specific Schedule', 'Gantt Chart', 'Performance Indicators')
+    )
+    st.session_state['page'] = selected_page
 
-def main():
-    cs_sidebar()
-    cs_body()
+
+def Overview():
+    cs_sidebar_overview()
+    cs_body_overview()
 
     return None
 
-def cs_sidebar():
+def Import_New_Excelfile():
+    cs_sidebar_INE()
+    cs_body_INE()
+
+
+def cs_body_INE():
+    st.title("IDK")
+
+
+def cs_sidebar_INE():
+    st.sidebar.title("INE")
     
+    st.sidebar.markdown('---')    
+    st.sidebar.markdown("## Overview", unsafe_allow_html=True)
     st.sidebar.markdown(
-    f'''
-        <style>
-            .sidebar .sidebar-content {{
-                width: 375px;
-            }}
-        </style>
-    ''',
-    unsafe_allow_html=True)
-
-    st.sidebar.header('Busje On His Way')
-
-    st.sidebar.markdown('Import Excel')
-
-    st.sidebar.markdown('Bus Schedule')
-
-    st.sidebar.markdown('Gantt Chart')
-
-    st.sidebar.markdown('Performance Indicators')
-
+        "<small>Used for clear insights into the current bus schedule. By switching through pages, more detailed information will be available.</small>",
+        unsafe_allow_html=True
+    )
+    st.sidebar.markdown(
+        "<small>If a different bus planning is desired, use 'Import New Excel' option in the menu.</small>",
+        unsafe_allow_html=True
+    )
+    
     st.sidebar.markdown('<small>Learn more about [Zuipen in Hubble](https://hubble.cafe/)</small>', unsafe_allow_html=True)
+    
+    st.sidebar.markdown('---')
 
-    st.sidebar.markdown('''<hr>''', unsafe_allow_html=True)
 
-    return None
+def cs_sidebar_overview():
+    st.sidebar.markdown('---')    
+    st.sidebar.markdown("## Overview", unsafe_allow_html=True)
+    st.sidebar.markdown(
+        "<small>Used for clear insights into the current bus schedule. By switching through pages, more detailed information will be available.</small>",
+        unsafe_allow_html=True
+    )
+    st.sidebar.markdown(
+        "<small>If a different bus planning is desired, use 'Import New Excel' option in the menu.</small>",
+        unsafe_allow_html=True
+    )
+    
+    st.sidebar.markdown('<small>Learn more about [Zuipen in Hubble](https://hubble.cafe/)</small>', unsafe_allow_html=True)
+    
+    st.sidebar.markdown('---')
 
-##########################
-# Main body of Bussie Komt Zo 
-##########################
 
-def cs_body():
+    return
+def cs_body_overview():
     col1,col2  = st.columns([1,1])
     #######################################
     # COLUMN 1
@@ -168,5 +191,7 @@ Fal-de, falderaldera
 #Pagina wissels:
 if st.session_state['page'] == 'Upload and validate':
     upload_validate_page()
-elif st.session_state['page'] == 'Charts':
-    main()
+elif st.session_state['page'] == 'Overview':
+    Overview()
+elif st.session_state['page'] == 'Import New Excelfile':
+    Import_New_Excelfile()
