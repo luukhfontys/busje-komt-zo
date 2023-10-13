@@ -1,5 +1,43 @@
 import pandas as pd
+import numpy as np
+import datetime
 
+def format_check_omloop(df_planning):
+    header_format = ['startlocatie', 'eindlocatie', 'starttijd', 
+                     'eindtijd','activiteit', 'buslijn', 
+                     'energieverbruik', 'starttijd datum',
+                     'eindtijd datum', 'omloop nummer']
+    df_headers = df_planning.columns.values.tolist()
+    type_format = [str, str, str, str, str, (np.int64, np.float64), (np.int64, np.float64), (pd.Timestamp, datetime.datetime), (pd.Timestamp, datetime.datetime), (int, float, np.int64)]
+    #df_types = df_planning.iloc[0][1:]
+
+    header_check = False
+    if header_format == df_headers: header_check = True
+
+    type_check = True
+    foute_datapunten = [] #[(rij, kolom), (rij, kolom), ... ]
+    
+    df_planning_error_cells = pd.DataFrame('', index=df_planning.index, columns=df_planning.columns)
+    
+    if header_check:
+        for i in range(df_planning.shape[0]):
+            df_types = df_planning.iloc[i]
+            for j in range(len(df_types)):
+                if not isinstance(df_types[j], type_format[j]):
+                    print(df_types[j], type_format[j])
+                    type_check = False
+                    foute_datapunten.append((i, j))
+                    df_planning_error_cells.iat[i, j] = 'background-color: red'
+    
+    df_planning_errors = df_planning.style.apply(lambda x: df_planning_error_cells, axis=None)
+    
+    if header_check:
+        return header_check, type_check, foute_datapunten, df_planning_errors
+    else:
+        return header_check, True, []
+# df_omloop = pd.read_excel('omloop planning copy.xlsx')
+# format_check = format_check_omloop(df_omloop)
+# x=1
 def prestatiemaat_materiaal_minuten(df_planning: pd.DataFrame) -> tuple[float, float]:
     """
     Deze functie neemt de omloop planning in vorm van pandas dataframe en output vervolgens
@@ -8,7 +46,7 @@ def prestatiemaat_materiaal_minuten(df_planning: pd.DataFrame) -> tuple[float, f
     """
     #Filteren op alleen de materiaal ritten
     df_materiaal_ritten = df_planning[df_planning['activiteit'] == 'materiaal rit']
-
+    
     #Convert de datum columns naar een datetime object m.b.v. pandas
     df_materiaal_ritten['starttijd datum'] = pd.to_datetime(df_materiaal_ritten['starttijd datum'])
     df_materiaal_ritten['eindtijd datum'] = pd.to_datetime(df_materiaal_ritten['eindtijd datum'])

@@ -1,5 +1,7 @@
 class bus:
-    def __init__(self, tijden:list=[], locaties:list=[],activiteit:list=[],buslijn:list=[],energieverbruik:list=[],omloopnummer:int=0, batterijstart:float=0.0,batterijmin:int=30) -> None:
+    def __init__(self, tijden:list=[], locaties:list=[], activiteit:list=[], 
+                 buslijn:list=[], energieverbruik:list=[], omloopnummer:int=0, 
+                 batterijstart:float=0.0, batterijmin:int=30) -> None:
         self.tijden = tijden
         self.locaties = locaties
         self.activiteit = activiteit
