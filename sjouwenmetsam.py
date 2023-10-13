@@ -8,6 +8,7 @@ from bus_class import bus
 from Functions import format_check_omloop
 from Gantt_chart import Gantt_chart
 from Functie_to_class_format import to_class, return_invalid_busses
+import plotly.express as px
 
 st.set_page_config(
     page_title='Bussie comes soon',
@@ -46,6 +47,8 @@ def upload_validate_page():
                 st.session_state['format_check'] = format_check
                 st.session_state['page'] = 'Overview'
 
+
+
         else:
             st.error(f"Error: Your data does not meet the required format.")
             if not format_check[0]:
@@ -53,6 +56,7 @@ def upload_validate_page():
             if not format_check[1]:
                 st.error(f'The following (row, colum) data points are not of the right type: {format_check[2]} \n For cell errors: see marked dataframe below: ')
                 st.dataframe(format_check[3])
+    
 
 
 def Overview():
@@ -148,16 +152,28 @@ def Overview():
 def Bus_Specific_Scedule():
     st.title(f"Bus Specific Scedule")
     totale_bussen = []
+    df_omloop = st.session_state['df_omloop']
     for i in range(1, 1+max(st.session_state['df_omloop']['omloop nummer'])):
         totale_bussen.append(f'Bus line {i}')
+
     selected_Bus = st.sidebar.selectbox(
         "Select a specific busline",
         (totale_bussen),
         index=0
     )
+    index_selected_bus = int(selected_Bus[8:])
+    
+    fig = Gantt_chart(df_omloop[df_omloop['omloop nummer'] == index_selected_bus])
+    fig.update_layout(yaxis=dict(showticklabels=False, domain=[0.5, 1]), title_text= f'Gantt Chart {selected_Bus}')
 
-def Gantt_Chart():
+    st.plotly_chart(fig)
+
+
+
+
+def Gantt_Chartbestand():
     st.title(f'Gantt Chart')
+    
 
 def Performance_Indicators():
     st.title(f"Performance Indicator")
@@ -185,6 +201,6 @@ else:
     elif selected_page == "Bus Specific Schedule":
         Bus_Specific_Scedule()
     elif selected_page == 'Gantt Chart':
-        Gantt_Chart()
+        Gantt_Chartbestand()
     elif selected_page == "Performance Indicators":
         Performance_Indicators()

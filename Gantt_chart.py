@@ -43,8 +43,7 @@ def Gantt_chart(omloop_planning: pd.DataFrame):
             if row['buslijn'] == '400' or '401':
                 value = row['buslijn']
                 df.loc[index, ['activiteit']] = [value]
-
-
+                    
     y_label = {'omloop nummer': 'Omloop nummer'}
 
     colors = {"materiaal rit": "forestgreen", "opladen": "darkgray", 401: "cornflowerblue", 400.0: "steelblue"}
