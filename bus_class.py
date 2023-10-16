@@ -67,6 +67,7 @@ class bus:
         self.valide = self.check_bus() # hier roepen we de functie check bus aan om te controleren of deze rit valide is,
                                        # dit gebeurt na het mee geven van de eigenschappen zodat we deze kunnen gebruiken
         # meegegeven gegevens staan beschreven in de class docstring #
+        self.sorteren_op_fouten = True
         if self.valide == 1:
             self.materiaal_minuten = self.type_minuten('materiaal rit')
             self.idle_minuten = self.type_minuten('idle')
@@ -135,8 +136,11 @@ class bus:
         Doordat we nu class objecten kunnen vergelijken kunnen wij een lijst met class objecten sorteren.
         In deze functie sorteren wij de class objecten op de uitkomst van checkbus
         '''
-        return self.valide < other.valide # aangeven welke waarde binnen de class vergeleken dient te worden
-
+        if self.sorteren_op_fouten:
+            return self.valide < other.valide # aangeven welke waarde binnen de class vergeleken dient te worden
+        else:
+            return self.omloopnummer < other.omloopnummer
+    
     def date_time_diff(self, begintijd:str,eindtijd:str):
         ''' geeft de het tijd verschil in minuten terug
         '''
