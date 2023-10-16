@@ -71,8 +71,8 @@ def check_dienstregeling(df_dienstregeling:pd.DataFrame, df_planning:pd.DataFram
     df_dienstregeling.rename(columns={'vertrektijd':'starttijd'}, inplace=True)
     while compleet and iteration < maximum:
         #print(df_dienstregeling.loc[iteration, :])
+        df_dienstregeling.loc[iteration, 'starttijd'] = df_dienstregeling.loc[iteration, 'starttijd'] + ':00'
         nieuwe_rij = df_dienstregeling.loc[iteration, :]
-        nieuwe_rij.iloc[1] += ':00' 
         df_planning.loc[len(df_planning.index)] = nieuwe_rij
         dupes = list(df_planning.duplicated(keep='first'))
         print(type(dupes))
