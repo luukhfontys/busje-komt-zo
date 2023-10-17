@@ -266,5 +266,5 @@ def kpis_optellen(bussen:list[object]):
     for bus in bussen:
         idle_minuten += bus.idle_minuten
         materiaal_minuten += bus.materiaal_minuten
-        bus_minuten += bus_minuten
+        bus_minuten += bus.busminuten
     return idle_minuten, materiaal_minuten, bus_minuten

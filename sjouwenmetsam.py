@@ -24,6 +24,7 @@ if 'page' not in st.session_state:
     st.session_state['format_check'] = None
     st.session_state['onderbouwingen'] = None
     st.session_state['batterij_slider'] = None
+    st.session_state['bussen'] = None
 
 # Function for the "Upload and Validate" page
 def upload_validate_page():
@@ -42,12 +43,12 @@ def upload_validate_page():
             onderbouwingen = return_invalid_busses(bussen)
             st.session_state['onderbouwingen'] = onderbouwingen
             st.success('Data upload successful, proceed to the next page.')
-            
 
             if st.button('Next'):
                 st.session_state['df_omloop'] = df_omloop
                 st.session_state['format_check'] = format_check
                 st.session_state['page'] = 'Overview'
+                st.session_state['bussen'] = bussen
 
 
 
@@ -79,7 +80,7 @@ def Overview():
         
         st.sidebar.markdown('---')
 
-
+        
         return
 
     def cs_body_overview():
@@ -120,6 +121,14 @@ def Overview():
             col1.title('The busplanning :green[passes]!')
             col1.header(f"The score of the planning is: {score[2]}")
             col1.subheader(f"The current performance indicators are:")
+            bussen = st.session_state['bussen']
+            data1, data2, data3 = kpis_optellen(bussen)
+            data4 = efficientie_maar_dan_gemiddeld(bussen)
+
+            data = {'Indicator': ['Total minutes idle','Total minutes material ride','Total minutes of effective driving', 'Average efficiency'],
+                    'Value': ["%.2f" % data1, "%.2f" % data2,"%.2f" %  data3,"%.3f" %  data4 ]}
+            col1.table(data)
+
         else:
             col1.title(f"The busplanning does :red[not pass]!")
             col1.header(f"The score of the planning is: {score_planning}")
@@ -127,15 +136,13 @@ def Overview():
             for error_message in onderbouwingen:
                 col1.error(error_message)
 
-        batterij_waarde_slider = st.session_state['batterij_slider']
-        bussen = to_class(df=df_omloop, batterij_waarde=(batterij_waarde_slider, batterij_waarde_slider * 0.1))
-        df_kpi = pd.DataFrame([kpis_optellen(bussen)[0],kpis_optellen(bussen)[1],kpis_optellen(bussen)[2]],['Total minutes idle','Total minutes material ride','Total minutes of effective driving'])
-        col1.table(df_kpi)
+
+       
+
     cs_sidebar_overview()
     cs_body_overview()
 
     return None
-
 def Bus_Specific_Scedule():
     st.title(f"Bus Specific Scedule")
     container = st.container()
@@ -146,7 +153,6 @@ def Bus_Specific_Scedule():
       ###
     totale_bussen = []
     df_omloop = st.session_state['df_omloop']
-    batterij_waarde_slider = st.session_state['batterij_slider']
     for i in range(1, 1+max(st.session_state['df_omloop']['omloop nummer'])):
         totale_bussen.append(f'Bus line {i}')
 
@@ -159,10 +165,10 @@ def Bus_Specific_Scedule():
 
 
     fig = Gantt_chart(df_omloop[df_omloop['omloop nummer'] == index_selected_bus])
-    fig.update_layout(yaxis=dict(showticklabels=False), title_text= f'Scedule {selected_Bus}',showlegend=False, height=350)
+    fig.update_layout(yaxis=dict(showticklabels=False), title_text= f'Scedule {selected_Bus}',showlegend=False, height=350, width=1150)
 
     col1.plotly_chart(fig)
-    bussen = to_class(df=df_omloop, batterij_waarde=(batterij_waarde_slider, batterij_waarde_slider * 0.1))
+    bussen = st.session_state['bussen']
     fig2 = make_plot(bussen[index_selected_bus - 1], False)
     col1.pyplot(fig2, transparent=True)
     
@@ -170,13 +176,19 @@ def Bus_Specific_Scedule():
 
       ###
 ### COLUMN 2 ###
-      ###
-    dftijdelijk_for_rounding = prestatiemaat_materiaal_minuten(df_omloop[df_omloop['omloop nummer'] == index_selected_bus])[2]
-    col2.table({"Minutes material ride":"%.2f" % dftijdelijk_for_rounding})
-    mean_material_minutes = (prestatiemaat_materiaal_minuten(df_omloop)[1])
-    dfmean_material_minutes = pd.DataFrame({'Average minutes material ride per busline':[mean_material_minutes]})
-    col2.table(dfmean_material_minutes.style.format({'Average minutes material ride per busline':"{:.1f}"}))
-    
+      ###   
+
+    data = {'Total minutes idle':"%.2f" % bussen[index_selected_bus-1].idle_minuten,
+            'Total minutes material ride': "%.2f" % bussen[index_selected_bus-1].materiaal_minuten,
+            'Total minutes of effective driving':"%.2f" % bussen[index_selected_bus-1].busminuten,
+            'Number of effective drives': bussen[index_selected_bus-1].ritten,
+            'Lowest amount of battery in kW-h':"%.3f" % bussen[index_selected_bus-1].min_lading,
+            'Final amount of battery in kW-h' :"%.3f" % bussen[index_selected_bus-1].eind_lading,
+            'Total minutes used':"%.2f" % bussen[index_selected_bus-1].totaal,
+            "Total efficiency":"%.3f" % bussen[index_selected_bus-1].efficientie}
+
+    for i in range(20): col2.write(" ")  
+    col2.table(data)
       ###
 ###  BODY ###
       ###
