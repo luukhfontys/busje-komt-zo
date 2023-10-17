@@ -74,6 +74,9 @@ class bus:
             self.ritten = self.aantal_ritten()
             self.min_lading = min(self.batterij_geschiedenis)
             self.eind_lading = self.batterijhuidig
+            self.busminuten = self.type_minuten('dienst rit')
+            self.totaal = self.busminuten + self.idle_minuten + self.materiaal_minuten
+            self.efficientie = self.busminuten/self.totaal
         
     def check_bus(self)->int:
         '''
@@ -178,6 +181,9 @@ class bus:
                 self.batterij_geschiedenis.append(self.batterijhuidig)
             self.min_lading = min(self.batterij_geschiedenis)
             self.eind_lading = self.batterijhuidig
+            self.busminuten = self.type_minuten('dienstrit')
+            self.totaal = self.busminuten + self.idle_minuten + self.materiaal_minuten
+            self.efficientie = self.busminuten/self.totaal
         return
     
     def aantal_ritten(self):

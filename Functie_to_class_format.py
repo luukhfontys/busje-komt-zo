@@ -211,3 +211,10 @@ def energieverbruik_check(df:pd.DataFrame, df_afstanden:pd.DataFrame):
     df_checked = df_mat_gar_apt[df_mat_gar_apt['energieverbruik'] >= (bovengrens_verbruik * afstand_in_km)]
     indexen_voor_false += list(df_checked.index)
     return indexen_voor_false
+
+def efficientie_maar_dan_gemiddeld(bussen:list[object]):
+    totaal = 0
+    for bus in bussen:
+        totaal += bus.efficientie
+    verhouding = totaal/len(bussen)
+    return verhouding
