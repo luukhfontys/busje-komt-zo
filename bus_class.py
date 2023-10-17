@@ -61,7 +61,7 @@ class bus:
         self.omloopnummer = omloopnummer
         self.batterijstart = batterij
         self.batterijhuidig = batterij[0] # hier word batterij geindexed omdat batterij een tweedelige tuple behoort te zijn
-        
+        self.batterij_geschiedenis = [batterij[0]] # geschiedenis van de batterij meegeven
         self.onderbouwing = ' ' # hierin slaan we de string op die uitleg geeft over de reden van falen,
                                 # als de bus zijn rit kan rijden blijf deze leef, maar deze moet bestaan om er naar te refereren
         self.valide = self.check_bus() # hier roepen we de functie check bus aan om te controleren of deze rit valide is,
@@ -71,6 +71,9 @@ class bus:
         if self.valide == 1:
             self.materiaal_minuten = self.type_minuten('materiaal rit')
             self.idle_minuten = self.type_minuten('idle')
+            self.ritten = self.aantal_ritten()
+            self.min_lading = min(self.batterij_geschiedenis)
+            self.eind_lading = self.batterijhuidig
         
     def check_bus(self)->int:
         '''
@@ -84,10 +87,11 @@ class bus:
         Wanneer de bus wel aan de bovenstaande eisen voldoet retourneerd de functie een 1
         '''
         # we controleren alle drie de criteria per iteratie
-        
+    
         for rit in range(len(self.tijden)): # we gebruiken hier self.tijden maar de lijsten zijn allemaal evenlang
             self.batterijhuidig -= self.energieverbruik[rit] # updaten van de batterij, 
                                                              #na de __init__ is huidige batterij de eindstand van de batterij
+            self.batterij_geschiedenis.append(self.batterijhuidig)
             ## batterij check
             if self.batterijhuidig <= self.batterijstart[1]: # index 1 is de min waarde van de batterij uit batterijstart
                 self.onderbouwing = (
@@ -103,15 +107,16 @@ class bus:
                     gesplite_eindtijd = vorige_eindtijd.split(':') # ze zijn opgeslagen als str dus gebruiken we split
                     gesplite_begintijd = huidige_starttijd.split(':') # datetime werkt hier niet omdat datetime
                                                                       # alleen negatieve waarde kan hebben voor dagen
-                    
+                    if gesplite_begintijd[0] == '00':
+                        gesplite_begintijd[0] = '24'
                     if (
-                        (int(gesplite_eindtijd[0])%24 > int(gesplite_begintijd[0])%24) or
+                        (int(gesplite_eindtijd[0])%24 > int(gesplite_begintijd[0])) or
                         (int(gesplite_eindtijd[0]) == int(gesplite_begintijd[0]) and
                         int(gesplite_eindtijd[1]) > int(gesplite_begintijd[1]))
                         ): # we checken 2 scenario's:
                            # - is het uur van de vorige tijd later dan de huidige modulo 24 om met de nacht rekening te houden
                            # - zijn ze hetzelfde checken we om de zelfde manier de minuten
-                        self.onderbouwing = f'bus {self.omloopnummer} returns to late from ride {rit-1} to make ride {rit} in time'
+                        self.onderbouwing = f'bus {self.omloopnummer} returns to late from ride {rit-1} to make ride {rit} in time, eindtijd {self.tijden[rit-1][1]} starttijd {self.tijden[rit][0]}'
                         return 0
             ## minimale laad tijd check
             if self.activiteit[rit] == 'opladen': # checken of we moeten controleren
@@ -162,6 +167,21 @@ class bus:
         return minuten
     
     def force_calc(self):
-        self.materiaal_minuten = self.type_minuten('materiaal rit')
-        self.idle_minuten = self.type_minuten('idle')
-        return      
+        if self.valide == 0:
+            self.materiaal_minuten = self.type_minuten('materiaal rit')
+            self.idle_minuten = self.type_minuten('idle')
+            self.ritten = self.aantal_ritten()
+            self.batterijhuidig = self.batterijstart[0]
+            self.batterij_geschiedenis = [self.batterijhuidig]
+            for rit in range(len(self.tijden)):
+                self.batterijhuidig -= self.energieverbruik[rit] 
+                self.batterij_geschiedenis.append(self.batterijhuidig)
+            self.min_lading = min(self.batterij_geschiedenis)
+            self.eind_lading = self.batterijhuidig
+        return
+    
+    def aantal_ritten(self):
+        aantal_400 = self.buslijn.count(400.0)
+        aantal_401 = self.buslijn.count(401.0)
+        totaal = aantal_400 + aantal_401
+        return totaal      
