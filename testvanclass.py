@@ -21,6 +21,9 @@ for bus in bussen:
     else:
         print(bus.omloopnummer)
 print(efficientie_maar_dan_gemiddeld(bussen=bussen))
+omloopnummer = 3
+make_plot(bussen[omloopnummer - 1])
+plt.show()
 # for i in range(1):
 #     for bus in bussen:
 #         print(bus.omloopnummer)
@@ -42,11 +45,11 @@ print(efficientie_maar_dan_gemiddeld(bussen=bussen))
 #     onderbouwingen = return_invalid_busses(bussen)
 
 # print(check_dienstregeling(df_planning=df, df_dienstregeling=df_dienstregeling))
-for bus in bussen:
-    bus.force_calc()
-    make_plot(bus=bus)
-    plt.show()
-    break
+# for bus in bussen:
+#     bus.force_calc()
+#     make_plot(bus=bus)
+#     plt.show()
+#     break
 ##### dingen om te doen:
 ### local vs global
 ### local

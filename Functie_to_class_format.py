@@ -218,3 +218,13 @@ def efficientie_maar_dan_gemiddeld(bussen:list[object]):
         totaal += bus.efficientie
     verhouding = totaal/len(bussen)
     return verhouding
+
+def kpis_optellen(bussen:list[object]):
+    idle_minuten = 0
+    materiaal_minuten = 0
+    bus_minuten = 0
+    for bus in bussen:
+        idle_minuten += bus.idle_minuten
+        materiaal_minuten += bus.materiaal_minuten
+        bus_minuten += bus_minuten
+    return idle_minuten, materiaal_minuten, bus_minuten
