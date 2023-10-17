@@ -91,9 +91,25 @@ def make_plot(bus: object, kleurenblind: bool = False):
         kleur1 = 'lime'
         kleur2 = 'red'
 
-    fig, ax = plt.subplots()  # Create a new figure and axes
+    fig, ax = plt.subplots(figsize=(10,3))  # Create a new figure and axes
     ax.plot(bus.batterij_geschiedenis, color=kleur1)
     ax.plot([bus.batterijstart[1]] * len(bus.batterij_geschiedenis), color=kleur2)
+    plt.xlabel("Activity number")
+    plt.ylabel("Amount of battery in kW-h")
+
+    ax.set_facecolor('white')
+
+    # Set the color of the axes, including border color, to white
+    ax.spines['bottom'].set_color('white')
+    ax.spines['top'].set_color('white')
+    ax.spines['left'].set_color('white')
+    ax.spines['right'].set_color('white')
+
+    # Set the color of the tick labels to white
+    ax.xaxis.label.set_color('white')
+    ax.yaxis.label.set_color('white')
+    ax.tick_params(axis='x', colors='white')
+    ax.tick_params(axis='y', colors='white')
 
     return fig 
 
@@ -242,3 +258,13 @@ def efficientie_maar_dan_gemiddeld(bussen:list[object]):
         totaal += bus.efficientie
     verhouding = totaal/len(bussen)
     return verhouding
+
+def kpis_optellen(bussen:list[object]):
+    idle_minuten = 0
+    materiaal_minuten = 0
+    bus_minuten = 0
+    for bus in bussen:
+        idle_minuten += bus.idle_minuten
+        materiaal_minuten += bus.materiaal_minuten
+        bus_minuten += bus_minuten
+    return idle_minuten, materiaal_minuten, bus_minuten

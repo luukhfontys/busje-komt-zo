@@ -33,7 +33,8 @@ def upload_validate_page():
     st.session_state['batterij_slider'] = batterij_waarde_slider
 
     if st_omloop is not None:
-        df_omloop = pd.read_excel(st_omloop, index_col=0)
+        df = pd.read_excel(st_omloop, index_col=0)
+        df_omloop = drop_tijdloze_activiteit(df)
         format_check = format_check_omloop(df_omloop)
 
         if all(format_check[:2]):
@@ -91,7 +92,7 @@ def Overview():
         # Display interactive widgets
 
         
-        col2.title('Grafieken')
+        col2.title('Visualisation')
         onderbouwingen = st.session_state['onderbouwingen']
         df_omloop = st.session_state['df_omloop']
         format_check = st.session_state['format_check']
@@ -110,34 +111,26 @@ def Overview():
         #######################################
         # COLUMN 1
         #######################################    
-        col1.markdown(
-        """
-        <style>
-        .main .block-container {
-        padding-right: 30px;
-        padding-left: 30px;
-        padding-top: 30px;
-        padding-bottom: 3px;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-        )
+        
         if error_count >= 3:
             score_planning = score[0]
         elif error_count < 2:
             score_planning = score[1]
         if error_count == 0:
-            col1.title('The busplanning passes!')
-            col1.header(f"The score of the planning is: {score_planning}")
-            col1.subheader(f"")
+            col1.title('The busplanning :green[passes]!')
+            col1.header(f"The score of the planning is: {score[2]}")
+            col1.subheader(f"The current performance indicators are:")
         else:
-            col1.title(f"The busplanning does not pass!")
+            col1.title(f"The busplanning does :red[not pass]!")
             col1.header(f"The score of the planning is: {score_planning}")
             col1.subheader('Errors in planning:')
             for error_message in onderbouwingen:
                 col1.error(error_message)
 
+        batterij_waarde_slider = st.session_state['batterij_slider']
+        bussen = to_class(df=df_omloop, batterij_waarde=(batterij_waarde_slider, batterij_waarde_slider * 0.1))
+        df_kpi = pd.DataFrame([kpis_optellen(bussen)[0],kpis_optellen(bussen)[1],kpis_optellen(bussen)[2]],['Total minutes idle','Total minutes material ride','Total minutes of effective driving'])
+        col1.table(df_kpi)
     cs_sidebar_overview()
     cs_body_overview()
 
@@ -153,6 +146,7 @@ def Bus_Specific_Scedule():
       ###
     totale_bussen = []
     df_omloop = st.session_state['df_omloop']
+    batterij_waarde_slider = st.session_state['batterij_slider']
     for i in range(1, 1+max(st.session_state['df_omloop']['omloop nummer'])):
         totale_bussen.append(f'Bus line {i}')
 
@@ -165,13 +159,12 @@ def Bus_Specific_Scedule():
 
 
     fig = Gantt_chart(df_omloop[df_omloop['omloop nummer'] == index_selected_bus])
-    fig.update_layout(yaxis=dict(showticklabels=False, domain=[0.5, 1]), title_text= f'Scedule {selected_Bus}',showlegend=False)
+    fig.update_layout(yaxis=dict(showticklabels=False), title_text= f'Scedule {selected_Bus}',showlegend=False, height=350)
 
     col1.plotly_chart(fig)
-    batterij_waarde_slider = st.session_state['batterij_waarde']
     bussen = to_class(df=df_omloop, batterij_waarde=(batterij_waarde_slider, batterij_waarde_slider * 0.1))
     fig2 = make_plot(bussen[index_selected_bus - 1], False)
-    col1.pyplot(fig2)
+    col1.pyplot(fig2, transparent=True)
     
 
 
