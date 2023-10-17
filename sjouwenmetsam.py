@@ -21,6 +21,7 @@ st.set_page_config(
 if 'page' not in st.session_state:
     st.session_state['page'] = 'Upload and validate'
     st.session_state['df_omloop'] = None
+    st.session_state['df_timetable'] = None
     st.session_state['format_check'] = None
     st.session_state['onderbouwingen'] = None
     st.session_state['batterij_slider'] = None
@@ -28,9 +29,10 @@ if 'page' not in st.session_state:
 
 # Function for the "Upload and Validate" page
 def upload_validate_page():
-    st.title('Excel invoer')
-    st_omloop = st.file_uploader('Upload omloop planning', type=['xlsx'])
-    batterij_waarde_slider = st.slider('Selecteer een start waarde voor de batterij', 255, 285, 270)
+    st.title('Input Bus Schedule')
+    st_omloop = st.file_uploader('Upload circulation planning', type=['xlsx'])
+    st_timetable = st.file_uploader('Upload timetable', type=['xlsx'])
+    batterij_waarde_slider = st.slider('Select begin value battery in kW-h', 255, 285, 270)
     st.session_state['batterij_slider'] = batterij_waarde_slider
 
     if st_omloop is not None:
