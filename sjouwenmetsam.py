@@ -44,15 +44,8 @@ def upload_validate_page():
             bussen = to_class(df=df_omloop, batterij_waarde=(batterij_waarde_slider, batterij_waarde_slider * 0.1))
             onderbouwingen = return_invalid_busses(bussen)
             st.session_state['onderbouwingen'] = onderbouwingen
-            st.success('Data upload successful, proceed to the next page.')
-
-            if st.button('Next'):
-                st.session_state['df_omloop'] = df_omloop
-                st.session_state['format_check'] = format_check
-                st.session_state['page'] = 'Overview'
-                st.session_state['bussen'] = bussen
-
-
+            st.success('Data upload successful.')
+            dubbelecheck = 12
 
         else:
             st.error(f"Error: Your data does not meet the required format.")
@@ -61,6 +54,19 @@ def upload_validate_page():
             if not format_check[1]:
                 st.error(f'The following (row, colum) data points are not of the right type: {format_check[2]} \n For cell errors: see marked dataframe below: ')
                 st.dataframe(format_check[3])
+
+        if st_timetable is not None:
+            df_dienstregeling = pd.read_excel(st_timetable)
+            if check_dienstregeling(df_dienstregeling, df_omloop) == True:
+                st.success("Timetable is correct, proceed to next page.")
+                if dubbelecheck == 12:
+                    if st.button('Next'):
+                        st.session_state['df_omloop'] = df_omloop
+                        st.session_state['format_check'] = format_check
+                        st.session_state['page'] = 'Overview'
+                        st.session_state['bussen'] = bussen
+
+
 
     
 
@@ -120,15 +126,21 @@ def Overview():
         elif error_count < 2:
             score_planning = score[1]
         if error_count == 0:
-            col1.title('The busplanning :green[passes]!')
-            col1.header(f"The score of the planning is: {score[2]}")
-            col1.subheader(f"The current performance indicators are:")
             bussen = st.session_state['bussen']
             data1, data2, data3 = kpis_optellen(bussen)
             data4 = efficientie_maar_dan_gemiddeld(bussen)
 
             data = {'Indicator': ['Total minutes idle','Total minutes material ride','Total minutes of effective driving', 'Average efficiency'],
                     'Value': ["%.2f" % data1, "%.2f" % data2,"%.2f" %  data3,"%.3f" %  data4 ]}
+            col1.title('The busplanning :green[passes]!')
+            
+            if 0 <= data4 <= 1.2:
+                col1.header(f"The score of the planning is: {score[2]}")
+            elif 1.2 < data4 <= 1.7:
+                col1.header(f"The score of the planning is: {score[3]}")
+            elif 1.75 < data4 :
+                col1.header(f"The score of the planning is: {score[4]}")    
+            col1.subheader(f"The current performance indicators are:")    
             col1.table(data)
 
         else:
