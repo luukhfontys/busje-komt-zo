@@ -63,11 +63,11 @@ def prestatiemaat_materiaal_minuten(df_planning: pd.DataFrame) -> tuple[float, f
     
     #df_materiaal_grouped slaat voor elke bus apart de materiaal rit lengte op.
     df_materiaal_grouped = df_materiaal_ritten.groupby('omloop nummer')['Materiaal Rit lengte minuten'].sum()
-    
     #Algemene gemiddelde materiaal rit lengte voor alle bussen: 
     gem_minuten_bus = df_materiaal_grouped.mean()
 
-    return totale_minuten, gem_minuten_bus
+
+    return totale_minuten, gem_minuten_bus, df_materiaal_grouped
 
 def aantal_omlopen(df_planning: pd.DataFrame) -> int:
     """Telt het aantal omlopen in een gegeven omloopplanning."""
@@ -110,3 +110,4 @@ def prestatiemaat_speling(df_planning: pd.DataFrame) -> tuple[float, float, floa
     gem_minuten_idle_bus = df_idle_grouped.mean()
     
     return totaal_niet_aangegeven_minuten, totale_idle_minuten, gem_minuten_idle_bus
+
