@@ -39,8 +39,7 @@ def upload_validate_page():
             onderbouwingen = return_invalid_busses(bussen)
             st.session_state['onderbouwingen'] = onderbouwingen
             st.success('Data upload successful, proceed to the next page.')
-            st.write(st_omloop.name)
-            st.dataframe(df_omloop, height=200)
+
 
             if st.button('Next'):
                 st.session_state['df_omloop'] = df_omloop
@@ -207,24 +206,15 @@ def Gantt_Chartbestand():
         width=1200, height=700, legend_x=1, legend_y=1)
     st.plotly_chart(fig)
 
-    
 
-def Performance_Indicators():
-    st.title(f"Performance Indicator")
-
-
-
-
-if st.session_state['page'] == 'Upload and validate':
-    upload_validate_page()
-elif st.session_state['page'] == 'Import New Excel':
+if st.session_state['page'] == 'Upload and validate' or st.session_state['page'] == 'Import New Excel':
     upload_validate_page()
 else:
     
     st.sidebar.title("Navigation")
     selected_page = st.sidebar.selectbox(
         "Select a page",
-        ('Overview', 'Import New Excel', "Bus Specific Schedule", "Gantt Chart", "Performance Indicators"),
+        ('Overview', 'Import New Excel', "Bus Specific Schedule", "Gantt Chart"),
         index=0
     )
 
@@ -232,9 +222,8 @@ else:
         Overview()
     elif selected_page == 'Import New Excel':
         upload_validate_page()
+        st.session_state['page'] = selected_page
     elif selected_page == "Bus Specific Schedule":
         Bus_Specific_Scedule()
     elif selected_page == 'Gantt Chart':
         Gantt_Chartbestand()
-    elif selected_page == "Performance Indicators":
-        Performance_Indicators()
