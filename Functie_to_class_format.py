@@ -82,17 +82,20 @@ def check_dienstregeling(df_dienstregeling:pd.DataFrame, df_planning:pd.DataFram
             print('oh jeee')  
     return compleet
 
-def make_plot(bus:object, kleurenblind:bool=False):
+def make_plot(bus: object, kleurenblind: bool = False):
     bus.force_calc()
     if kleurenblind:
         kleur1 = 'blue'
         kleur2 = 'orange'
     else:
         kleur1 = 'lime'
-        kleur2 = 'red'    
-    plt.plot(bus.batterij_geschiedenis, color=kleur1)
-    plt.plot([bus.batterijstart[1]]* len(bus.batterij_geschiedenis), color=kleur2)
-    return
+        kleur2 = 'red'
+
+    fig, ax = plt.subplots()  # Create a new figure and axes
+    ax.plot(bus.batterij_geschiedenis, color=kleur1)
+    ax.plot([bus.batterijstart[1]] * len(bus.batterij_geschiedenis), color=kleur2)
+
+    return fig 
 
 def drop_tijdloze_activiteit(df:pd.DataFrame):
     indexen_met_tijd_0 = []
@@ -218,3 +221,4 @@ def efficientie_maar_dan_gemiddeld(bussen:list[object]):
         totaal += bus.efficientie
     verhouding = totaal/len(bussen)
     return verhouding
+

@@ -4,10 +4,10 @@ import plotly.express as px
 from pathlib import Path
 import base64
 import matplotlib.pyplot as plt
-from bus_class import bus
+from bus_class import *
 from Functions import *
 from Gantt_chart import Gantt_chart
-from Functie_to_class_format import to_class, return_invalid_busses
+from Functie_to_class_format import *
 import plotly.express as px
 
 st.set_page_config(
@@ -23,12 +23,14 @@ if 'page' not in st.session_state:
     st.session_state['df_omloop'] = None
     st.session_state['format_check'] = None
     st.session_state['onderbouwingen'] = None
+    st.session_state['batterij_slider'] = None
 
 # Function for the "Upload and Validate" page
 def upload_validate_page():
     st.title('Excel invoer')
     st_omloop = st.file_uploader('Upload omloop planning', type=['xlsx'])
     batterij_waarde_slider = st.slider('Selecteer een start waarde voor de batterij', 255, 285, 270)
+    st.session_state['batterij_slider'] = batterij_waarde_slider
 
     if st_omloop is not None:
         df_omloop = pd.read_excel(st_omloop, index_col=0)
@@ -39,7 +41,7 @@ def upload_validate_page():
             onderbouwingen = return_invalid_busses(bussen)
             st.session_state['onderbouwingen'] = onderbouwingen
             st.success('Data upload successful, proceed to the next page.')
-
+            
 
             if st.button('Next'):
                 st.session_state['df_omloop'] = df_omloop
@@ -55,6 +57,7 @@ def upload_validate_page():
             if not format_check[1]:
                 st.error(f'The following (row, colum) data points are not of the right type: {format_check[2]} \n For cell errors: see marked dataframe below: ')
                 st.dataframe(format_check[3])
+
     
 
 
@@ -165,6 +168,12 @@ def Bus_Specific_Scedule():
     fig.update_layout(yaxis=dict(showticklabels=False, domain=[0.5, 1]), title_text= f'Scedule {selected_Bus}',showlegend=False)
 
     col1.plotly_chart(fig)
+    batterij_waarde_slider = st.session_state['batterij_waarde']
+    bussen = to_class(df=df_omloop, batterij_waarde=(batterij_waarde_slider, batterij_waarde_slider * 0.1))
+    fig2 = make_plot(bussen[index_selected_bus - 1], False)
+    col1.pyplot(fig2)
+    
+
 
       ###
 ### COLUMN 2 ###
@@ -205,6 +214,17 @@ def Gantt_Chartbestand():
     fig.update_layout(
         width=1200, height=700, legend_x=1, legend_y=1)
     st.plotly_chart(fig)
+
+
+
+
+
+
+
+
+
+
+
 
 
 if st.session_state['page'] == 'Upload and validate' or st.session_state['page'] == 'Import New Excel':
