@@ -72,7 +72,7 @@ def Overview():
             unsafe_allow_html=True
         )
         
-        st.sidebar.markdown('<small>Learn more about [Zuipen in Hubble](https://hubble.cafe/)</small>', unsafe_allow_html=True)
+        st.sidebar.markdown('<small>Explore our [User Manual](https://hubble.cafe/) for step-by-step guidance on using this tool.</small>', unsafe_allow_html=True)
         
         st.sidebar.markdown('---')
 
@@ -81,6 +81,7 @@ def Overview():
 
     def cs_body_overview():
         col1,col2  = st.columns([1,1])
+        score = ['Fail','Unsatisfactory', 'Sufficient', 'Good', 'Excellent']
         #######################################
         # COLUMN 2
         #######################################
@@ -98,18 +99,11 @@ def Overview():
             error_count = 0
             #col2.write('Editable dataframe:')
             #col2.data_editor(df_omloop, num_rows='dynamic')
-            
             for error_message in onderbouwingen:
-                error_count += 1 
-                col2.error(error_message)
-            
-            if col2.button('Go back'):
-                col2.session_state['page'] = 'Upload and validate'
+                error_count += 1             
         else:
             col2.error(f'Data is in the wrong format, please go back to the first page and try again.')
-                
-            if col2.button('Go back'):
-                col2.session_state['page'] = 'Upload and validate'
+            
     
         #######################################
         # COLUMN 1
@@ -127,23 +121,20 @@ def Overview():
         """,
         unsafe_allow_html=True
         )
+        if error_count >= 3:
+            score_planning = score[0]
+        elif error_count < 2:
+            score_planning = score[1]
         if error_count == 0:
-            col1.title('The busplanning passes')
+            col1.title('The busplanning passes!')
+            col1.header(f"The score of the planning is: {score_planning}")
+            col1.subheader(f"")
         else:
-            col1.title(f"The busplanning does not pass")
-        # Display data
-
-        col1.subheader('Display data')
-        col1.code('''
-        Alle eendjes zwemmen in het water
-        Falderalderiere, falderalderare
-        Alle eendjes zwemmen in het water
-        Fal-de, falderaldera
-        Alle eendjes zwemmen in het water
-        Falderalderiere, falderalderare
-        Alle eendjes zwemmen in het water
-        Fal-de, falderaldera
-        ''')
+            col1.title(f"The busplanning does not pass!")
+            col1.header(f"The score of the planning is: {score_planning}")
+            col1.subheader('Errors in planning:')
+            for error_message in onderbouwingen:
+                col1.error(error_message)
 
     cs_sidebar_overview()
     cs_body_overview()
