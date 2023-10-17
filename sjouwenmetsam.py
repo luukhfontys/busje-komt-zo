@@ -5,7 +5,7 @@ from pathlib import Path
 import base64
 import matplotlib.pyplot as plt
 from bus_class import bus
-from Functions import format_check_omloop
+from Functions import *
 from Gantt_chart import Gantt_chart
 from Functie_to_class_format import to_class, return_invalid_busses
 import plotly.express as px
@@ -60,7 +60,6 @@ def upload_validate_page():
 
 
 def Overview():
-    st.title("Overview Page")
     def cs_sidebar_overview():
         st.sidebar.markdown('---')    
         st.sidebar.markdown("## Overview", unsafe_allow_html=True)
@@ -79,42 +78,9 @@ def Overview():
 
 
         return
+
     def cs_body_overview():
         col1,col2  = st.columns([1,1])
-        #######################################
-        # COLUMN 1
-        #######################################    
-        col1.markdown(
-        """
-        <style>
-        .main .block-container {
-            padding-right: 30px;
-            padding-left: 30px;
-            padding-top: 30px;
-            padding-bottom: 3px;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
-        col1.title('What The User Snatses will apear here')
-        # Display data
-
-        col1.subheader('Display data')
-        col1.code('''
-    Alle eendjes zwemmen in het water
-    Falderalderiere, falderalderare
-    Alle eendjes zwemmen in het water
-    Fal-de, falderaldera
-    Alle eendjes zwemmen in het water
-    Falderalderiere, falderalderare
-    Alle eendjes zwemmen in het water
-    Fal-de, falderaldera
-        ''')
-
-    
-
         #######################################
         # COLUMN 2
         #######################################
@@ -129,10 +95,12 @@ def Overview():
         
         if all(format_check[:2]):
             col2.plotly_chart(Gantt_chart(df_omloop))
+            error_count = 0
             #col2.write('Editable dataframe:')
             #col2.data_editor(df_omloop, num_rows='dynamic')
             
             for error_message in onderbouwingen:
+                error_count += 1 
                 col2.error(error_message)
             
             if col2.button('Go back'):
@@ -142,7 +110,40 @@ def Overview():
                 
             if col2.button('Go back'):
                 col2.session_state['page'] = 'Upload and validate'
-        return None
+    
+        #######################################
+        # COLUMN 1
+        #######################################    
+        col1.markdown(
+        """
+        <style>
+        .main .block-container {
+        padding-right: 30px;
+        padding-left: 30px;
+        padding-top: 30px;
+        padding-bottom: 3px;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+        )
+        if error_count == 0:
+            col1.title('The busplanning passes')
+        else:
+            col1.title(f"The busplanning does not pass")
+        # Display data
+
+        col1.subheader('Display data')
+        col1.code('''
+        Alle eendjes zwemmen in het water
+        Falderalderiere, falderalderare
+        Alle eendjes zwemmen in het water
+        Fal-de, falderaldera
+        Alle eendjes zwemmen in het water
+        Falderalderiere, falderalderare
+        Alle eendjes zwemmen in het water
+        Fal-de, falderaldera
+        ''')
 
     cs_sidebar_overview()
     cs_body_overview()
@@ -151,6 +152,12 @@ def Overview():
 
 def Bus_Specific_Scedule():
     st.title(f"Bus Specific Scedule")
+    container = st.container()
+    col1, col2 = container.columns([2,1])
+
+      ###
+### COLUMN 1 ###
+      ###
     totale_bussen = []
     df_omloop = st.session_state['df_omloop']
     for i in range(1, 1+max(st.session_state['df_omloop']['omloop nummer'])):
@@ -162,17 +169,53 @@ def Bus_Specific_Scedule():
         index=0
     )
     index_selected_bus = int(selected_Bus[8:])
-    
-    fig = Gantt_chart(df_omloop[df_omloop['omloop nummer'] == index_selected_bus])
-    fig.update_layout(yaxis=dict(showticklabels=False, domain=[0.5, 1]), title_text= f'Gantt Chart {selected_Bus}')
 
+
+    fig = Gantt_chart(df_omloop[df_omloop['omloop nummer'] == index_selected_bus])
+    fig.update_layout(yaxis=dict(showticklabels=False, domain=[0.5, 1]), title_text= f'Scedule {selected_Bus}',showlegend=False)
+
+    col1.plotly_chart(fig)
+
+      ###
+### COLUMN 2 ###
+      ###
+    dftijdelijk_for_rounding = prestatiemaat_materiaal_minuten(df_omloop[df_omloop['omloop nummer'] == index_selected_bus])[2]
+    col2.table({"Minutes material ride":"%.2f" % dftijdelijk_for_rounding})
+    mean_material_minutes = (prestatiemaat_materiaal_minuten(df_omloop)[1])
+    dfmean_material_minutes = pd.DataFrame({'Average minutes material ride per busline':[mean_material_minutes]})
+    col2.table(dfmean_material_minutes.style.format({'Average minutes material ride per busline':"{:.1f}"}))
+    
+      ###
+###  BODY ###
+      ###
+    if 'begintijd' not in df_omloop.columns:
+        expander = st.expander(label=("For a detailed scedule click here"))
+        expander.table((df_omloop[df_omloop['omloop nummer'] == index_selected_bus]))
+    else:
+        expander = st.expander(label=("For a detailed scedule click here"))
+        expander.table((df_omloop[df_omloop['omloop nummer'] == index_selected_bus]).drop(columns=['begintijd', 'lengte']))
+
+
+def Gantt_Chartbestand():    
+    st.markdown(
+        """
+        <style>
+        .main .block-container {
+            padding-right: 30px;
+            padding-left: 30px;
+            padding-top: 30px;
+            padding-bottom: 3px;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+    df_omloop = st.session_state['df_omloop']
+    fig = Gantt_chart(df_omloop)
+    fig.update_layout(
+        width=1200, height=700, legend_x=1, legend_y=1)
     st.plotly_chart(fig)
 
-
-
-
-def Gantt_Chartbestand():
-    st.title(f'Gantt Chart')
     
 
 def Performance_Indicators():
