@@ -1,6 +1,6 @@
 import pandas as pd
 from bus_class import bus
-from Functie_to_class_format import to_class, return_invalid_busses, reverse_sort, check_dienstregeling, make_plot, drop_tijdloze_activiteit, energieverbruik_check, efficientie_maar_dan_gemiddeld
+from Functie_to_class_format import to_class, return_invalid_busses, reverse_sort, check_dienstregeling, make_plot, drop_tijdloze_activiteit, energieverbruik_check, efficientie_maar_dan_gemiddeld, kpis_optellen
 import matplotlib.pyplot as plt
 
 df = pd.read_excel('omloop planning.xlsx')
@@ -9,7 +9,6 @@ df_afstands_matrix = pd.read_excel('Connexxion data - 2023-2024.xlsx', sheet_nam
 #bussen = to_class(df=df,batterij_waarde=(251,10))
 
 #df['geloofwaardig'] = True
-print(df[df['activiteit'] == 'idle'])
 drop_tijdloze_activiteit(df=df)
 print(energieverbruik_check(df=df, df_afstanden=df_afstands_matrix))
 
@@ -21,9 +20,7 @@ for bus in bussen:
     else:
         print(bus.omloopnummer)
 print(efficientie_maar_dan_gemiddeld(bussen=bussen))
-omloopnummer = 3
-make_plot(bussen[omloopnummer - 1])
-plt.show()
+print(kpis_optellen(bussen=bussen))
 # for i in range(1):
 #     for bus in bussen:
 #         print(bus.omloopnummer)
