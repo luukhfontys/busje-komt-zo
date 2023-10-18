@@ -32,9 +32,10 @@ def upload_validate_page():
     st.title('Input Bus Schedule')
     st_omloop = st.file_uploader('Upload circulation planning', type=['xlsx'])
     st_timetable = st.file_uploader('Upload timetable', type=['xlsx'])
-    batterij_waarde_slider = st.slider('Select begin value battery in kW-h', 255, 285, 270)
+    batterij_waarde_slider = st.slider('Select starting value battery in kW-h', 255, 285, 270)
     st.session_state['batterij_slider'] = batterij_waarde_slider
 
+    #Omloop planning upload en dergelijke
     if st_omloop is not None:
         df = pd.read_excel(st_omloop, index_col=0)
         df_omloop = drop_tijdloze_activiteit(df)
@@ -54,17 +55,54 @@ def upload_validate_page():
             if not format_check[1]:
                 st.error(f'The following (row, colum) data points are not of the right type: {format_check[2]} \n For cell errors: see marked dataframe below: ')
                 st.dataframe(format_check[3])
-
+        
+        #Dienstregeling upload en dergelijke
         if st_timetable is not None:
-            df_dienstregeling = pd.read_excel(st_timetable)
-            if check_dienstregeling(df_dienstregeling, df_omloop) == True:
-                st.success("Timetable is correct, proceed to next page.")
-                if dubbelecheck == 12:
-                    if st.button('Next'):
-                        st.session_state['df_omloop'] = df_omloop
-                        st.session_state['format_check'] = format_check
-                        st.session_state['page'] = 'Overview'
-                        st.session_state['bussen'] = bussen
+            df_dienstregeling = pd.read_excel(st_timetable, sheet_name='Dienstregeling')
+            df_afstandsmatrix = pd.read_excel(st_timetable, sheet_name='Afstand matrix')
+            format_check_timetb = format_check_timetable(df_dienstregeling)
+            if all(format_check_timetb[:2]):
+                checkdr = check_dienstregeling(df_dienstregeling, df_omloop)
+                compleet = checkdr[0]
+                reden = checkdr[1]
+                
+                if compleet == True:
+                    energieverbruikrows = energieverbruik_check(df_omloop, df_afstandsmatrix)
+                    
+                    if len(energieverbruikrows) == 0:
+                        st.success("Timetable is correct and in the right format, proceed to next page.")
+                        if dubbelecheck == 12:
+                            if st.button('Next'):
+                                st.session_state['df_omloop'] = df_omloop
+                                st.session_state['format_check'] = format_check
+                                st.session_state['page'] = 'Overview'
+                                st.session_state['bussen'] = bussen
+                    else:
+                        df_energieverbruik_errors = df.style.apply(highlight_warning_rows, rows=energieverbruikrows, axis=1)
+                        st.warning("Timetable is correct, but abnormal energy usage by busses detected, see marked dataframe below: ")
+                        st.dataframe(df_energieverbruik_errors)
+                        st.warning("This warning can be ignored, or the abnormal energy values can be normalised in the dataset.")
+                        ignore_warning = st.checkbox("Check to ignore warning")
+                        
+                        if st.button('Next'):
+                            if not ignore_warning:
+                                temp=temp           ###Functie om waardes te normaliseren hier invoeren
+                                st.success("Values succesfully normalised")
+                                
+                            st.session_state['df_omloop'] = df_omloop
+                            st.session_state['format_check'] = format_check
+                            st.session_state['page'] = 'Overview'
+                            st.session_state['bussen'] = bussen
+                        
+                else:
+                    st.error("Timetable is not correct: " + reden)
+            else:
+                st.error(f"Error: Your timetable does not meet the required format.")
+                if not format_check_timetb[0]:
+                    st.error("Headers are not in format: ['startlocatie', 'vertrektijd', 'eindlocatie', 'buslijn']")
+                if not format_check_timetb[1]:
+                    st.error(f'The following (row, colum) data points are not of the right type: {format_check_timetb[2]} \n For cell errors: see marked dataframe below: ')
+                    st.dataframe(format_check_timetb[3])
 
 
 

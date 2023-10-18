@@ -68,6 +68,7 @@ def check_dienstregeling(df_dienstregeling:pd.DataFrame, df_planning:pd.DataFram
     compleet = True
     iteration = 0
     maximum = len(df_dienstregeling.index)
+    reden = None
     while compleet and iteration < maximum:
         start_locatie = df_dienstregeling.loc[iteration, 'startlocatie']
         eind_locatie = df_dienstregeling.loc[iteration, 'eindlocatie']
@@ -80,7 +81,8 @@ def check_dienstregeling(df_dienstregeling:pd.DataFrame, df_planning:pd.DataFram
         if len(df_planning_tijd.index) == 0:
             compleet = False
             reden = f'Busline {buslijn} does not drive according to schedule at {tijd} from {start_locatie} to {eind_locatie}'
-            #print('oh jeee')  
+            #print('oh jeee')
+    
     return compleet, reden
 
 def make_plot(bus: object, kleurenblind: bool = False):
