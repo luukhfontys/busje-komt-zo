@@ -82,17 +82,36 @@ def check_dienstregeling(df_dienstregeling:pd.DataFrame, df_planning:pd.DataFram
             print('oh jeee')  
     return compleet
 
-def make_plot(bus:object, kleurenblind:bool=False):
+def make_plot(bus: object, kleurenblind: bool = False):
     bus.force_calc()
     if kleurenblind:
         kleur1 = 'blue'
         kleur2 = 'orange'
     else:
         kleur1 = 'lime'
-        kleur2 = 'red'    
-    plt.plot(bus.batterij_geschiedenis, color=kleur1)
-    plt.plot([bus.batterijstart[1]]* len(bus.batterij_geschiedenis), color=kleur2)
-    return
+        kleur2 = 'red'
+
+    fig, ax = plt.subplots(figsize=(10,3))  # Create a new figure and axes
+    ax.plot(bus.batterij_geschiedenis, color=kleur1)
+    ax.plot([bus.batterijstart[1]] * len(bus.batterij_geschiedenis), color=kleur2)
+    plt.xlabel("Activity number")
+    plt.ylabel("Amount of battery in kW-h")
+
+    ax.set_facecolor('white')
+
+    # Set the color of the axes, including border color, to white
+    ax.spines['bottom'].set_color('white')
+    ax.spines['top'].set_color('white')
+    ax.spines['left'].set_color('white')
+    ax.spines['right'].set_color('white')
+
+    # Set the color of the tick labels to white
+    ax.xaxis.label.set_color('white')
+    ax.yaxis.label.set_color('white')
+    ax.tick_params(axis='x', colors='white')
+    ax.tick_params(axis='y', colors='white')
+
+    return fig 
 
 def drop_tijdloze_activiteit(df:pd.DataFrame):
     indexen_met_tijd_0 = []

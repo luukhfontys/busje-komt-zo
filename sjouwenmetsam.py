@@ -4,10 +4,10 @@ import plotly.express as px
 from pathlib import Path
 import base64
 import matplotlib.pyplot as plt
-from bus_class import bus
+from bus_class import *
 from Functions import *
 from Gantt_chart import Gantt_chart
-from Functie_to_class_format import to_class, return_invalid_busses
+from Functie_to_class_format import *
 import plotly.express as px
 
 st.set_page_config(
@@ -21,32 +21,31 @@ st.set_page_config(
 if 'page' not in st.session_state:
     st.session_state['page'] = 'Upload and validate'
     st.session_state['df_omloop'] = None
+    st.session_state['df_timetable'] = None
     st.session_state['format_check'] = None
     st.session_state['onderbouwingen'] = None
+    st.session_state['batterij_slider'] = None
+    st.session_state['bussen'] = None
 
 # Function for the "Upload and Validate" page
 def upload_validate_page():
-    st.title('Excel invoer')
-    st_omloop = st.file_uploader('Upload omloop planning', type=['xlsx'])
-    batterij_waarde_slider = st.slider('Selecteer een start waarde voor de batterij', 255, 285, 270)
+    st.title('Input Bus Schedule')
+    st_omloop = st.file_uploader('Upload circulation planning', type=['xlsx'])
+    st_timetable = st.file_uploader('Upload timetable', type=['xlsx'])
+    batterij_waarde_slider = st.slider('Select begin value battery in kW-h', 255, 285, 270)
+    st.session_state['batterij_slider'] = batterij_waarde_slider
 
     if st_omloop is not None:
-        df_omloop = pd.read_excel(st_omloop, index_col=0)
+        df = pd.read_excel(st_omloop, index_col=0)
+        df_omloop = drop_tijdloze_activiteit(df)
         format_check = format_check_omloop(df_omloop)
 
         if all(format_check[:2]):
             bussen = to_class(df=df_omloop, batterij_waarde=(batterij_waarde_slider, batterij_waarde_slider * 0.1))
             onderbouwingen = return_invalid_busses(bussen)
             st.session_state['onderbouwingen'] = onderbouwingen
-            st.success('Data upload successful, proceed to the next page.')
-
-
-            if st.button('Next'):
-                st.session_state['df_omloop'] = df_omloop
-                st.session_state['format_check'] = format_check
-                st.session_state['page'] = 'Overview'
-
-
+            st.success('Data upload successful.')
+            dubbelecheck = 12
 
         else:
             st.error(f"Error: Your data does not meet the required format.")
@@ -55,6 +54,20 @@ def upload_validate_page():
             if not format_check[1]:
                 st.error(f'The following (row, colum) data points are not of the right type: {format_check[2]} \n For cell errors: see marked dataframe below: ')
                 st.dataframe(format_check[3])
+
+        if st_timetable is not None:
+            df_dienstregeling = pd.read_excel(st_timetable)
+            if check_dienstregeling(df_dienstregeling, df_omloop) == True:
+                st.success("Timetable is correct, proceed to next page.")
+                if dubbelecheck == 12:
+                    if st.button('Next'):
+                        st.session_state['df_omloop'] = df_omloop
+                        st.session_state['format_check'] = format_check
+                        st.session_state['page'] = 'Overview'
+                        st.session_state['bussen'] = bussen
+
+
+
     
 
 
@@ -75,7 +88,7 @@ def Overview():
         
         st.sidebar.markdown('---')
 
-
+        
         return
 
     def cs_body_overview():
@@ -88,7 +101,7 @@ def Overview():
         # Display interactive widgets
 
         
-        col2.title('Grafieken')
+        col2.title('Visualisation')
         onderbouwingen = st.session_state['onderbouwingen']
         df_omloop = st.session_state['df_omloop']
         format_check = st.session_state['format_check']
@@ -107,39 +120,43 @@ def Overview():
         #######################################
         # COLUMN 1
         #######################################    
-        col1.markdown(
-        """
-        <style>
-        .main .block-container {
-        padding-right: 30px;
-        padding-left: 30px;
-        padding-top: 30px;
-        padding-bottom: 3px;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-        )
+        
         if error_count >= 3:
             score_planning = score[0]
         elif error_count < 2:
             score_planning = score[1]
         if error_count == 0:
-            col1.title('The busplanning passes!')
-            col1.header(f"The score of the planning is: {score_planning}")
-            col1.subheader(f"")
+            bussen = st.session_state['bussen']
+            data1, data2, data3 = kpis_optellen(bussen)
+            data4 = efficientie_maar_dan_gemiddeld(bussen)
+
+            data = {'Indicator': ['Total minutes idle','Total minutes material ride','Total minutes of effective driving', 'Average efficiency'],
+                    'Value': ["%.2f" % data1, "%.2f" % data2,"%.2f" %  data3,"%.3f" %  data4 ]}
+            col1.title('The busplanning :green[passes]!')
+            
+            if 0 <= data4 <= 1.2:
+                col1.header(f"The score of the planning is: {score[2]}")
+            elif 1.2 < data4 <= 1.7:
+                col1.header(f"The score of the planning is: {score[3]}")
+            elif 1.75 < data4 :
+                col1.header(f"The score of the planning is: {score[4]}")    
+            col1.subheader(f"The current performance indicators are:")    
+            col1.table(data)
+
         else:
-            col1.title(f"The busplanning does not pass!")
+            col1.title(f"The busplanning does :red[not pass]!")
             col1.header(f"The score of the planning is: {score_planning}")
             col1.subheader('Errors in planning:')
             for error_message in onderbouwingen:
                 col1.error(error_message)
 
+
+       
+
     cs_sidebar_overview()
     cs_body_overview()
 
     return None
-
 def Bus_Specific_Scedule():
     st.title(f"Bus Specific Scedule")
     container = st.container()
@@ -162,19 +179,30 @@ def Bus_Specific_Scedule():
 
 
     fig = Gantt_chart(df_omloop[df_omloop['omloop nummer'] == index_selected_bus])
-    fig.update_layout(yaxis=dict(showticklabels=False, domain=[0.5, 1]), title_text= f'Scedule {selected_Bus}',showlegend=False)
+    fig.update_layout(yaxis=dict(showticklabels=False), title_text= f'Scedule {selected_Bus}',showlegend=False, height=350, width=1150)
 
     col1.plotly_chart(fig)
+    bussen = st.session_state['bussen']
+    fig2 = make_plot(bussen[index_selected_bus - 1], False)
+    col1.pyplot(fig2, transparent=True)
+    
+
 
       ###
 ### COLUMN 2 ###
-      ###
-    dftijdelijk_for_rounding = prestatiemaat_materiaal_minuten(df_omloop[df_omloop['omloop nummer'] == index_selected_bus])[2]
-    col2.table({"Minutes material ride":"%.2f" % dftijdelijk_for_rounding})
-    mean_material_minutes = (prestatiemaat_materiaal_minuten(df_omloop)[1])
-    dfmean_material_minutes = pd.DataFrame({'Average minutes material ride per busline':[mean_material_minutes]})
-    col2.table(dfmean_material_minutes.style.format({'Average minutes material ride per busline':"{:.1f}"}))
-    
+      ###   
+
+    data = {'Total minutes idle':"%.2f" % bussen[index_selected_bus-1].idle_minuten,
+            'Total minutes material ride': "%.2f" % bussen[index_selected_bus-1].materiaal_minuten,
+            'Total minutes of effective driving':"%.2f" % bussen[index_selected_bus-1].busminuten,
+            'Number of effective drives': bussen[index_selected_bus-1].ritten,
+            'Lowest amount of battery in kW-h':"%.3f" % bussen[index_selected_bus-1].min_lading,
+            'Final amount of battery in kW-h' :"%.3f" % bussen[index_selected_bus-1].eind_lading,
+            'Total minutes used':"%.2f" % bussen[index_selected_bus-1].totaal,
+            "Total efficiency":"%.3f" % bussen[index_selected_bus-1].efficientie}
+
+    for i in range(20): col2.write(" ")  
+    col2.table(data)
       ###
 ###  BODY ###
       ###
@@ -205,6 +233,17 @@ def Gantt_Chartbestand():
     fig.update_layout(
         width=1200, height=700, legend_x=1, legend_y=1)
     st.plotly_chart(fig)
+
+
+
+
+
+
+
+
+
+
+
 
 
 if st.session_state['page'] == 'Upload and validate' or st.session_state['page'] == 'Import New Excel':
