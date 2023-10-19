@@ -247,13 +247,13 @@ def aanpassen_naar_gemiddeld(df_omloop:pd.DataFrame,df_afstand:pd.DataFrame, ind
             buslijn = df_omloop.loc[index, 'buslijn']
             df_buslijn = df_afstand[df_afstand['buslijn'] == buslijn]
             df_richting = df_buslijn[df_buslijn['startlocatie'] == start_locatie]
-            afstand_in_km = df_richting['afstand in meters']/1000
+            afstand_in_km = df_richting['afstand in meters'].values[0]/1000
             df_omloop.loc[index, 'energieverbruik'] = afstand_in_km * gem_verbruik
         else:
             df_afstand = df_afstand.loc[4:,:]
             df_vertrek = df_afstand[df_afstand['startlocatie'] == start_locatie]
-            df_aankomst = df_vertrek[df_vertrek['eindlocate'] == eind_locatie]
-            afstand_in_km = df_aankomst['afstand in meters']/1000
+            df_aankomst = df_vertrek[df_vertrek['eindlocatie'] == eind_locatie]
+            afstand_in_km = df_aankomst['afstand in meters'].values[0]/1000
             df_omloop.loc[index, 'energieverbruik'] = afstand_in_km * gem_verbruik 
     return df_omloop
 
@@ -274,5 +274,8 @@ def kpis_optellen(bussen:list[object]):
         bus_minuten += bus.busminuten
     return idle_minuten, materiaal_minuten, bus_minuten
 
-df_omloop = pd.read_excel('omloop planning energie verbruik test.xlsx')
-df_afstand = pd.read_excel('Connexxion data - 2023-2024.xlsx', sheet_name='Afstand matrix')
+# df_omloop = pd.read_excel('omloop planning energie verbruik test.xlsx')
+# df_afstand = pd.read_excel('Connexxion data - 2023-2024.xlsx', sheet_name='Afstand matrix')
+# indexes = [2, 3, 12]
+# test = aanpassen_naar_gemiddeld(df_omloop, df_afstand, indexes)
+# x=1
