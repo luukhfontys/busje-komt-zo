@@ -61,8 +61,14 @@ def upload_validate_page():
             df_dienstregeling = pd.read_excel(st_timetable)
             
             format_check_timetb = format_check_timetable(df_dienstregeling)
-            if all(format_check_timetb[:2]):
+            try:
                 df_afstandsmatrix = pd.read_excel(st_timetable, sheet_name='Afstand matrix')
+                read_success_afstandsmatrix = True
+            except Exception as e:
+                df_afstandsmatrix = None
+                read_success_afstandsmatrix = False
+            
+            if all(format_check_timetb[:2]) and read_success_afstandsmatrix:
                 checkdr = check_dienstregeling(df_dienstregeling, df_omloop)
                 compleet = checkdr[0]
                 reden = checkdr[1]
@@ -79,24 +85,29 @@ def upload_validate_page():
                                 st.session_state['page'] = 'Overview'
                                 st.session_state['bussen'] = bussen
                     else:
-                        df_energieverbruik_errors = df.style.apply(highlight_warning_rows, rows=energieverbruikrows, axis=1)
+                        df_energieverbruik_errors = df_omloop.style.apply(highlight_warning_rows, rows=energieverbruikrows, axis=1)
                         st.warning("Timetable is correct, but abnormal energy usage by busses detected, see marked dataframe below: ")
                         st.dataframe(df_energieverbruik_errors)
                         st.warning("This warning can be ignored, or the abnormal energy values can be normalised in the dataset.")
-                        ignore_warning = st.checkbox("Check to ignore warning")
                         
-                        if st.button('Next'):
-                            if not ignore_warning:
-                                temp=temp           ###Functie om waardes te normaliseren hier invoeren
-                                st.success("Values succesfully normalised")
-                                
+                        if st.button('Next, (Ignore warning)'):
                             st.session_state['df_omloop'] = df_omloop
                             st.session_state['format_check'] = format_check
                             st.session_state['page'] = 'Overview'
                             st.session_state['bussen'] = bussen
                         
+                        if st.button('Next, (Normalize abnormal values)'):
+                            aanpassen_naar_gemiddeld(df_omloop, df_afstandsmatrix, energieverbruikrows)
+                            st.success("Values succesfully normalised")
+                            st.session_state['df_omloop'] = df_omloop
+                            st.session_state['format_check'] = format_check
+                            st.session_state['page'] = 'Overview'
+                            st.session_state['bussen'] = bussen
+                            
                 else:
                     st.error("Timetable is not correct: " + reden)
+                    if read_success_afstandsmatrix == False:
+                        st.error("Distance matrix sheet missing in timetable")
             else:
                 st.error(f"Error: Your timetable does not meet the required format.")
                 if not format_check_timetb[0]:
