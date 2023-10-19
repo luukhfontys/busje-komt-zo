@@ -58,7 +58,7 @@ def Gantt_chart(omloop_planning: pd.DataFrame):
     df2['activiteit'] = df['activiteit'].map(legend_titles).fillna(df['activiteit'])
 
     fig = px.timeline(df2, x_start="starttijd datum", x_end="eindtijd datum", y="omloop nummer", color = 'activiteit', title = "Gantt Chart", labels = y_label, color_discrete_map = colors)
-    fig.update_layout(xaxis_title="Date", legend_x=0.7, legend_y=1.1,width= 600)
+    fig.update_layout(xaxis_title="Time", legend_x=0.7, legend_y=1.1,width= 600)
     fig.update_layout(legend_title_text="Activity")
 
 
