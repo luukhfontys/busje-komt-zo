@@ -62,6 +62,7 @@ def upload_validate_page():
             
             format_check_timetb = format_check_timetable(df_dienstregeling)
             if all(format_check_timetb[:2]):
+                df_afstandsmatrix = pd.read_excel(st_timetable, sheet_name='Afstand matrix')
                 checkdr = check_dienstregeling(df_dienstregeling, df_omloop)
                 compleet = checkdr[0]
                 reden = checkdr[1]
