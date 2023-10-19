@@ -90,13 +90,13 @@ def upload_validate_page():
                         st.dataframe(df_energieverbruik_errors)
                         st.warning("This warning can be ignored, or the abnormal energy values can be normalised in the dataset.")
                         
-                        if st.button('Next, (Ignore warning)'):
+                        if st.button('Next (Ignore warning)'):
                             st.session_state['df_omloop'] = df_omloop
                             st.session_state['format_check'] = format_check
                             st.session_state['page'] = 'Overview'
                             st.session_state['bussen'] = bussen
                         
-                        if st.button('Next, (Normalize abnormal values)'):
+                        if st.button('Next (Normalize abnormal values)'):
                             df_omloop = aanpassen_naar_gemiddeld(df_omloop, df_afstandsmatrix, energieverbruikrows)
                             st.success("Values succesfully normalised")
                             st.session_state['df_omloop'] = df_omloop
