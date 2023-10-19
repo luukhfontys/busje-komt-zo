@@ -56,6 +56,7 @@ def upload_validate_page():
         format_check = format_check_omloop(df_omloop)
 
         if all(format_check[:2]):
+            error_format_omloop = False
             df_omloop = drop_tijdloze_activiteit(df_omloop)
             bussen = to_class(df=df_omloop, batterij_waarde=(batterij_waarde_slider, batterij_waarde_slider * 0.1))
             onderbouwingen = return_invalid_busses(bussen)
@@ -64,6 +65,7 @@ def upload_validate_page():
             dubbelecheck = 12
 
         else:
+            error_format_omloop = True
             st.error(f"Error: Your data does not meet the required format.")
             if not format_check[0]:
                 st.error("Headers are not in format: [index, 'startlocatie', 'eindlocatie', 'starttijd', 'eindtijd', 'activiteit', 'buslijn', 'energieverbruik', 'starttijd datum', 'eindtijd datum', 'omloop nummer']")
@@ -103,29 +105,27 @@ def upload_validate_page():
                     else:
                         df_energieverbruik_errors = df_omloop.style.apply(highlight_warning_rows, rows=energieverbruikrows, axis=1)
                         warning1 = st.warning("Timetable is correct, but abnormal energy usage by busses detected, see marked dataframe below: ")
-                        dforiginal = True
                         dataframe = st.dataframe(df_energieverbruik_errors)
                         warning2 = st.warning("This warning can be ignored, or the abnormal energy values can be normalised in the dataset.")
-                        
-                        if st.button('Next (Ignore warning)'):
-                            st.session_state['df_omloop'] = df_omloop
-                            st.session_state['format_check'] = format_check
-                            st.session_state['page'] = 'Overview'
-                            st.session_state['bussen'] = bussen
-                            st.experimental_rerun()
-                        
-                        if st.button('Next (Normalize abnormal values)'):
-                            dforiginal = False
-                            df_omloop = aanpassen_naar_gemiddeld(df_omloop, df_afstandsmatrix, energieverbruikrows)
-                            st.success("Values succesfully normalised, to continue, please press the Next (Normalize abnormal values) button again.")
-                            dataframe.empty()
-                            warning1.empty()
-                            warning2.empty()
-                            dataframe = st.dataframe(df_omloop.style.apply(highlight_warning_rows_green, rows=energieverbruikrows, axis=1))
-                            st.session_state['df_omloop'] = df_omloop
-                            st.session_state['format_check'] = format_check
-                            st.session_state['page'] = 'Overview'
-                            st.session_state['bussen'] = bussen
+                        if not error_format_omloop:
+                            if st.button('Next (Ignore warning)'):
+                                st.session_state['df_omloop'] = df_omloop
+                                st.session_state['format_check'] = format_check
+                                st.session_state['page'] = 'Overview'
+                                st.session_state['bussen'] = bussen
+                                st.experimental_rerun()
+                            
+                            if st.button('Next (Normalize abnormal values)'):
+                                df_omloop = aanpassen_naar_gemiddeld(df_omloop, df_afstandsmatrix, energieverbruikrows)
+                                st.success("Values succesfully normalised, to continue, please press the Next (Normalize abnormal values) button again.")
+                                dataframe.empty()
+                                warning1.empty()
+                                warning2.empty()
+                                dataframe = st.dataframe(df_omloop.style.apply(highlight_warning_rows_green, rows=energieverbruikrows, axis=1))
+                                st.session_state['df_omloop'] = df_omloop
+                                st.session_state['format_check'] = format_check
+                                st.session_state['page'] = 'Overview'
+                                st.session_state['bussen'] = bussen
                             
                             
                 else:
