@@ -32,15 +32,16 @@ def upload_validate_page():
     st.title('Input Bus Schedule')
     st_omloop = st.file_uploader('Upload circulation planning', type=['xlsx'])
     st_timetable = st.file_uploader('Upload timetable', type=['xlsx'])
-    batterij_waarde_slider = st.slider('Select begin value battery in kW-h', 255, 285, 270)
+    batterij_waarde_slider = st.slider('Select starting value battery in kW-h', 255, 285, 270)
     st.session_state['batterij_slider'] = batterij_waarde_slider
 
+    #Omloop planning upload en dergelijke
     if st_omloop is not None:
-        df = pd.read_excel(st_omloop, index_col=0)
-        df_omloop = drop_tijdloze_activiteit(df)
+        df_omloop = pd.read_excel(st_omloop, index_col=0)
         format_check = format_check_omloop(df_omloop)
 
         if all(format_check[:2]):
+            df_omloop = drop_tijdloze_activiteit(df_omloop)
             bussen = to_class(df=df_omloop, batterij_waarde=(batterij_waarde_slider, batterij_waarde_slider * 0.1))
             onderbouwingen = return_invalid_busses(bussen)
             st.session_state['onderbouwingen'] = onderbouwingen
@@ -54,22 +55,67 @@ def upload_validate_page():
             if not format_check[1]:
                 st.error(f'The following (row, colum) data points are not of the right type: {format_check[2]} \n For cell errors: see marked dataframe below: ')
                 st.dataframe(format_check[3])
-
+        
+        #Dienstregeling upload en dergelijke
         if st_timetable is not None:
             df_dienstregeling = pd.read_excel(st_timetable)
-            if check_dienstregeling(df_dienstregeling, df_omloop) == True:
-                st.success("Timetable is correct, proceed to next page.")
-                if dubbelecheck == 12:
-                    if st.button('Next'):
-                        st.session_state['df_omloop'] = df_omloop
-                        st.session_state['format_check'] = format_check
-                        st.session_state['page'] = 'Overview'
-                        st.session_state['bussen'] = bussen
-
-
-
-    
-
+            
+            format_check_timetb = format_check_timetable(df_dienstregeling)
+            try:
+                df_afstandsmatrix = pd.read_excel(st_timetable, sheet_name='Afstand matrix')
+                read_success_afstandsmatrix = True
+            except Exception as e:
+                df_afstandsmatrix = None
+                read_success_afstandsmatrix = False
+            
+            if all(format_check_timetb[:2]) and read_success_afstandsmatrix:
+                checkdr = check_dienstregeling(df_dienstregeling, df_omloop)
+                compleet = checkdr[0]
+                reden = checkdr[1]
+                
+                if compleet == True:
+                    energieverbruikrows = energieverbruik_check(df_omloop, df_afstandsmatrix)
+                    
+                    if len(energieverbruikrows) == 0:
+                        st.success("Timetable is correct and in the right format, proceed to next page.")
+                        if dubbelecheck == 12:
+                            if st.button('Next'):
+                                st.session_state['df_omloop'] = df_omloop
+                                st.session_state['format_check'] = format_check
+                                st.session_state['page'] = 'Overview'
+                                st.session_state['bussen'] = bussen
+                    else:
+                        df_energieverbruik_errors = df_omloop.style.apply(highlight_warning_rows, rows=energieverbruikrows, axis=1)
+                        st.warning("Timetable is correct, but abnormal energy usage by busses detected, see marked dataframe below: ")
+                        st.dataframe(df_energieverbruik_errors)
+                        st.warning("This warning can be ignored, or the abnormal energy values can be normalised in the dataset.")
+                        
+                        if st.button('Next (Ignore warning)'):
+                            st.session_state['df_omloop'] = df_omloop
+                            st.session_state['format_check'] = format_check
+                            st.session_state['page'] = 'Overview'
+                            st.session_state['bussen'] = bussen
+                        
+                        if st.button('Next (Normalize abnormal values)'):
+                            df_omloop = aanpassen_naar_gemiddeld(df_omloop, df_afstandsmatrix, energieverbruikrows)
+                            st.success("Values succesfully normalised")
+                            st.dataframe(df_omloop.style.apply(highlight_warning_rows, rows=energieverbruikrows, axis=1))
+                            st.session_state['df_omloop'] = df_omloop
+                            st.session_state['format_check'] = format_check
+                            st.session_state['page'] = 'Overview'
+                            st.session_state['bussen'] = bussen
+                            
+                else:
+                    st.error("Timetable is not correct: " + reden)
+                    if read_success_afstandsmatrix == False:
+                        st.error("Distance matrix sheet missing in timetable")
+            else:
+                st.error(f"Error: Your timetable does not meet the required format.")
+                if not format_check_timetb[0]:
+                    st.error("Headers are not in format: ['startlocatie', 'vertrektijd', 'eindlocatie', 'buslijn']")
+                if not format_check_timetb[1]:
+                    st.error(f'The following (row, colum) data points are not of the right type: {format_check_timetb[2]} \n For cell errors: see marked dataframe below: ')
+                    st.dataframe(format_check_timetb[3])
 
 def Overview():
     def cs_sidebar_overview():
@@ -130,25 +176,44 @@ def Overview():
             data1, data2, data3 = kpis_optellen(bussen)
             data4 = efficientie_maar_dan_gemiddeld(bussen)
 
-            data = {'Indicator': ['Total minutes idle','Total minutes material ride','Total minutes of effective driving', 'Average efficiency'],
-                    'Value': ["%.2f" % data1, "%.2f" % data2,"%.2f" %  data3,"%.3f" %  data4 ]}
+            data = {'Performance indicator': ['Total idle time','Total material ride','Total time effective driving', 'Average efficiency'],
+                    'Value': [f'{"%.2f" % data1} minutes',f' {"%.2f" % data2} minutes',f'{"%.2f" %  data3} minutes',"%.3f" %  data4 ]}
             col1.title('The busplanning :green[passes]!')
             
             if 0 <= data4 <= 1.2:
-                col1.header(f"The score of the planning is: {score[2]}")
+                col1.header(f"The score of the planning is: :orange[{score[2]}]")
             elif 1.2 < data4 <= 1.7:
-                col1.header(f"The score of the planning is: {score[3]}")
+                col1.header(f"The score of the planning is: :green[{score[3]}]")
             elif 1.75 < data4 :
-                col1.header(f"The score of the planning is: {score[4]}")    
+                col1.header(f"The score of the planning is: :green[{score[4]}]")    
             col1.subheader(f"The current performance indicators are:")    
             col1.table(data)
 
         else:
             col1.title(f"The busplanning does :red[not pass]!")
-            col1.header(f"The score of the planning is: {score_planning}")
+            col1.header(f"The score of the planning is: :red[{score_planning}]")
             col1.subheader('Errors in planning:')
             for error_message in onderbouwingen:
                 col1.error(error_message)
+
+        expander = col1.expander(label=("Tips on improving schedule"))
+        expander.markdown(
+    """
+    There are five grades for planning:
+    - :red[Fail]
+    - :red[Unsatisfactory]
+    - :orange[Sufficient]
+    - :green[Good]
+    - :green[Excellent] 
+
+    When aiming to enhance the planning from an unsatisfactory level, the focus should be on rectifying errors. \n
+    If the planning is sufficient or better, efforts should be directed towards improving performance indicators. This can be accomplished by:
+    - Reducing idle time
+    - Reducing material ride times
+    - Increasing the total minutes of effective driving.
+    - Improving average efficiency.
+    """
+)
 
 
        
@@ -192,14 +257,14 @@ def Bus_Specific_Scedule():
 ### COLUMN 2 ###
       ###   
 
-    data = {'Total minutes idle':"%.2f" % bussen[index_selected_bus-1].idle_minuten,
-            'Total minutes material ride': "%.2f" % bussen[index_selected_bus-1].materiaal_minuten,
-            'Total minutes of effective driving':"%.2f" % bussen[index_selected_bus-1].busminuten,
-            'Number of effective drives': bussen[index_selected_bus-1].ritten,
-            'Lowest amount of battery in kW-h':"%.3f" % bussen[index_selected_bus-1].min_lading,
-            'Final amount of battery in kW-h' :"%.3f" % bussen[index_selected_bus-1].eind_lading,
-            'Total minutes used':"%.2f" % bussen[index_selected_bus-1].totaal,
-            "Total efficiency":"%.3f" % bussen[index_selected_bus-1].efficientie}
+    data = {'Total idle time':f'{"%.2f" % bussen[index_selected_bus-1].idle_minuten} minutes',
+            'Total material ride time':f'{ "%.2f" % bussen[index_selected_bus-1].materiaal_minuten} minutes',
+            'Total time of effective driving':f'{"%.2f" % bussen[index_selected_bus-1].busminuten} minutes',
+            'Number of effective drives':f'{ bussen[index_selected_bus-1].ritten}',
+            'Lowest amount of battery':f'{"%.3f" % bussen[index_selected_bus-1].min_lading} kW-h',
+            'Final amount of battery' :f'{"%.3f" % bussen[index_selected_bus-1].eind_lading} kW-h',
+            'Total time used':f'{"%.2f" % bussen[index_selected_bus-1].totaal} minutes',
+            "Total efficiency":f'{"%.3f" % bussen[index_selected_bus-1].efficientie}'}
 
     for i in range(20): col2.write(" ")  
     col2.table(data)
@@ -253,7 +318,7 @@ else:
     st.sidebar.title("Navigation")
     selected_page = st.sidebar.selectbox(
         "Select a page",
-        ('Overview', 'Import New Excel', "Bus Specific Schedule", "Gantt Chart"),
+        ('Overview', "Bus Specific Schedule", "Gantt Chart",'Import New Excel'),
         index=0
     )
 
