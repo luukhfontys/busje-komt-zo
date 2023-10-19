@@ -199,7 +199,12 @@ def Overview():
     - :green[Good]
     - :green[Excellent]
 
-    When aiming to enhance planning from an unsatisfactory level, the focus should be on rectifying errors. If the planning is sufficient or better, efforts should be directed towards improving performance indicators. This can be accomplished by reducing idle and material ride times, increasing the total minutes of effective driving, and enhancing average efficiency.
+    When aiming to enhance the planning from an unsatisfactory level, the focus should be on rectifying errors.
+    If the planning is sufficient or better, efforts should be directed towards improving performance indicators. This can be accomplished by:
+    - Reducing idle time
+    - Reducing material ride times
+    - Increasing the total minutes of effective driving.
+    - Improving average efficiency.
     """
 )
 
