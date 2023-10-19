@@ -188,6 +188,20 @@ def Overview():
             for error_message in onderbouwingen:
                 col1.error(error_message)
 
+        expander = col1.expander(label=("Tips on improving schedule"))
+        expander.markdown(
+    """
+    Presently, there are five grades for planning:
+    - :red[Fail]
+    - :red[Unsatisfactory]
+    - :green[Sufficient]
+    - :green[Good]
+    - :green[Excellent]
+
+    When aiming to enhance planning from an unsatisfactory level, the focus should be on rectifying errors. If the planning is sufficient or better, efforts should be directed towards improving performance indicators. This can be accomplished by reducing idle and material ride times, increasing the total minutes of effective driving, and enhancing average efficiency.
+    """
+)
+
 
        
 
