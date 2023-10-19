@@ -84,6 +84,7 @@ def upload_validate_page():
                                 st.session_state['format_check'] = format_check
                                 st.session_state['page'] = 'Overview'
                                 st.session_state['bussen'] = bussen
+                                st.experimental_rerun()
                     else:
                         df_energieverbruik_errors = df_omloop.style.apply(highlight_warning_rows, rows=energieverbruikrows, axis=1)
                         warning1 = st.warning("Timetable is correct, but abnormal energy usage by busses detected, see marked dataframe below: ")
