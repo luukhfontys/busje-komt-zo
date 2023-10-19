@@ -169,16 +169,16 @@ def Overview():
             data1, data2, data3 = kpis_optellen(bussen)
             data4 = efficientie_maar_dan_gemiddeld(bussen)
 
-            data = {'Indicator': ['Total minutes idle','Total minutes material ride','Total minutes of effective driving', 'Average efficiency'],
-                    'Value': ["%.2f" % data1, "%.2f" % data2,"%.2f" %  data3,"%.3f" %  data4 ]}
+            data = {'Performance indicator': ['Total idle time','Total material ride','Total time effective driving', 'Average efficiency'],
+                    'Value': [f'{"%.2f" % data1} minutes',f' {"%.2f" % data2} minutes',f'{"%.2f" %  data3} minutes',"%.3f" %  data4 ]}
             col1.title('The busplanning :green[passes]!')
             
             if 0 <= data4 <= 1.2:
-                col1.header(f"The score of the planning is: {score[2]}")
+                col1.header(f"The score of the planning is: :orange[{score[2]}]")
             elif 1.2 < data4 <= 1.7:
-                col1.header(f"The score of the planning is: {score[3]}")
+                col1.header(f"The score of the planning is: :green[{score[3]}]")
             elif 1.75 < data4 :
-                col1.header(f"The score of the planning is: {score[4]}")    
+                col1.header(f"The score of the planning is: :green[{score[4]}]")    
             col1.subheader(f"The current performance indicators are:")    
             col1.table(data)
 
@@ -192,14 +192,14 @@ def Overview():
         expander = col1.expander(label=("Tips on improving schedule"))
         expander.markdown(
     """
-    Presently, there are five grades for planning:
+    There are five grades for planning:
     - :red[Fail]
     - :red[Unsatisfactory]
-    - :green[Sufficient]
+    - :orange[Sufficient]
     - :green[Good]
-    - :green[Excellent]
+    - :green[Excellent] 
 
-    When aiming to enhance the planning from an unsatisfactory level, the focus should be on rectifying errors.
+    When aiming to enhance the planning from an unsatisfactory level, the focus should be on rectifying errors. \n
     If the planning is sufficient or better, efforts should be directed towards improving performance indicators. This can be accomplished by:
     - Reducing idle time
     - Reducing material ride times
