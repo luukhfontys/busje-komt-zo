@@ -335,6 +335,7 @@ else:
     elif selected_page == 'Import New Excel':
         upload_validate_page()
         st.session_state['page'] = selected_page
+        st.experimental_rerun()
     elif selected_page == "Bus Specific Schedule":
         Bus_Specific_Scedule()
     elif selected_page == 'Gantt Chart':
