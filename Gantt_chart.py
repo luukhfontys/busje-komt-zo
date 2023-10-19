@@ -8,6 +8,7 @@ def Gantt_chart(omloop_planning: pd.DataFrame):
     """"Vul path naar omloop planning in, output: een plotly gantt chart object."""
     df_planning = omloop_planning
     df = omloop_planning
+    df2 = omloop_planning
 
     starttijd = df_planning.starttijd.values.tolist()
     eindtijd = df_planning.eindtijd.values.tolist()
@@ -45,11 +46,19 @@ def Gantt_chart(omloop_planning: pd.DataFrame):
                 df.loc[index, ['activiteit']] = [value]
 
 
-    y_label = {'omloop nummer': 'Omloop nummer'}
+    y_label = {'omloop nummer': 'Circulation number'}
+    legend_titles = {
+    'materiaal rit': 'Material Ride',
+    'opladen': 'Charging',
+    401: 'Bus Line 401',
+    400.0: 'Bus Line 400'}
 
-    colors = {"materiaal rit": "forestgreen", "opladen": "darkgray", 401: "cornflowerblue", 400.0: "steelblue"}
 
-    fig = px.timeline(df, x_start="starttijd datum", x_end="eindtijd datum", y="omloop nummer", color = 'activiteit', title = "Gantt Chart", labels = y_label, color_discrete_map = colors)
+    colors = {"Material Ride": "forestgreen", "Charging": "darkgray", 'Bus Line 401': "cornflowerblue", 'Bus Line 400': "steelblue"}
+    df2['activiteit'] = df['activiteit'].map(legend_titles).fillna(df['activiteit'])
+
+    fig = px.timeline(df2, x_start="starttijd datum", x_end="eindtijd datum", y="omloop nummer", color = 'activiteit', title = "Gantt Chart", labels = y_label, color_discrete_map = colors)
     fig.update_layout(xaxis_title="Date", legend_x=0.7, legend_y=1.1,width= 600)
+
 
     return fig
