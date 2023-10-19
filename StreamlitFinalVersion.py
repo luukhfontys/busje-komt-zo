@@ -116,11 +116,6 @@ def upload_validate_page():
                     st.error(f'The following (row, colum) data points are not of the right type: {format_check_timetb[2]} \n For cell errors: see marked dataframe below: ')
                     st.dataframe(format_check_timetb[3])
 
-
-
-    
-
-
 def Overview():
     def cs_sidebar_overview():
         st.sidebar.markdown('---')    
