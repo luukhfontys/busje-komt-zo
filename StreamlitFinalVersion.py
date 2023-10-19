@@ -99,6 +99,7 @@ def upload_validate_page():
                         if st.button('Next (Normalize abnormal values)'):
                             df_omloop = aanpassen_naar_gemiddeld(df_omloop, df_afstandsmatrix, energieverbruikrows)
                             st.success("Values succesfully normalised")
+                            st.dataframe(df_omloop.style.apply(highlight_warning_rows, rows=energieverbruikrows, axis=1))
                             st.session_state['df_omloop'] = df_omloop
                             st.session_state['format_check'] = format_check
                             st.session_state['page'] = 'Overview'
