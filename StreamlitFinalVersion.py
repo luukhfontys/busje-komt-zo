@@ -86,24 +86,31 @@ def upload_validate_page():
                                 st.session_state['bussen'] = bussen
                     else:
                         df_energieverbruik_errors = df_omloop.style.apply(highlight_warning_rows, rows=energieverbruikrows, axis=1)
-                        st.warning("Timetable is correct, but abnormal energy usage by busses detected, see marked dataframe below: ")
-                        st.dataframe(df_energieverbruik_errors)
-                        st.warning("This warning can be ignored, or the abnormal energy values can be normalised in the dataset.")
+                        warning1 = st.warning("Timetable is correct, but abnormal energy usage by busses detected, see marked dataframe below: ")
+                        dforiginal = True
+                        dataframe = st.dataframe(df_energieverbruik_errors)
+                        warning2 = st.warning("This warning can be ignored, or the abnormal energy values can be normalised in the dataset.")
                         
                         if st.button('Next (Ignore warning)'):
                             st.session_state['df_omloop'] = df_omloop
                             st.session_state['format_check'] = format_check
                             st.session_state['page'] = 'Overview'
                             st.session_state['bussen'] = bussen
+                            st.experimental_rerun()
                         
                         if st.button('Next (Normalize abnormal values)'):
+                            dforiginal = False
                             df_omloop = aanpassen_naar_gemiddeld(df_omloop, df_afstandsmatrix, energieverbruikrows)
-                            st.success("Values succesfully normalised")
-                            st.dataframe(df_omloop.style.apply(highlight_warning_rows, rows=energieverbruikrows, axis=1))
+                            st.success("Values succesfully normalised, to continue, please press the Next (Normalize abnormal values) button again.")
+                            dataframe.empty()
+                            warning1.empty()
+                            warning2.empty()
+                            dataframe = st.dataframe(df_omloop.style.apply(highlight_warning_rows_green, rows=energieverbruikrows, axis=1))
                             st.session_state['df_omloop'] = df_omloop
                             st.session_state['format_check'] = format_check
                             st.session_state['page'] = 'Overview'
                             st.session_state['bussen'] = bussen
+                            
                             
                 else:
                     st.error("Timetable is not correct: " + reden)

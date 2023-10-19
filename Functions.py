@@ -145,3 +145,8 @@ def highlight_warning_rows(s, rows):
     if s.name in rows:
         return ['background-color: #da7808'] * len(s)
     return [''] * len(s)
+
+def highlight_warning_rows_green(s, rows):
+    if s.name in rows:
+        return ['background-color: green'] * len(s)
+    return [''] * len(s)
