@@ -190,7 +190,7 @@ def Overview():
 
         else:
             col1.title(f"The busplanning does :red[not pass]!")
-            col1.header(f"The score of the planning is: {score_planning}")
+            col1.header(f"The score of the planning is: :red[{score_planning}]")
             col1.subheader('Errors in planning:')
             for error_message in onderbouwingen:
                 col1.error(error_message)
