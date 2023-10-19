@@ -234,26 +234,28 @@ def energieverbruik_check(df:pd.DataFrame, df_afstanden:pd.DataFrame):
     indexen_voor_false += list(df_checked.index)
     return indexen_voor_false
 
-def aanpassen_naar_gemiddeld(df:pd.DataFrame,df_afstand:pd.DataFrame, index:int):
+def aanpassen_naar_gemiddeld(df_omloop:pd.DataFrame,df_afstand:pd.DataFrame, indexes:list):
     gem_verbruik = (0.7 + 2.5)/2
-    activiteit = df.loc[index, 'activiteit']
-    start_locatie = df.loc[index, 'startlocatie']
-    eind_locatie = df.loc[index, 'eindlocatie']
-    if activiteit == 'idle':
-        df.loc[index, 'energieverbruik'] = 0.01
-    elif activiteit == 'dienst rit':
-        buslijn = df.loc[index, 'buslijn']
-        df_buslijn = df_afstand[df_afstand['buslijn'] == buslijn]
-        df_richting = df_buslijn[df_buslijn['startlocatie'] == start_locatie]
-        afstand_in_km = df_richting['afstand in meters']/1000
-        df.loc[index, 'energieverbruik'] = afstand_in_km * gem_verbruik
-    else:
-       df_afstand = df_afstand.loc[4:,:]
-       df_vertrek = df_afstand[df_afstand['startlocatie'] == start_locatie]
-       df_aankomst = df_vertrek[df_vertrek['eindlocate'] == eind_locatie]
-       afstand_in_km = df_aankomst['afstand in meters']/1000
-       df.loc[index, 'energieverbruik'] = afstand_in_km * gem_verbruik 
-    return df
+    
+    for index in indexes:
+        activiteit = df_omloop.loc[index, 'activiteit']
+        start_locatie = df_omloop.loc[index, 'startlocatie']
+        eind_locatie = df_omloop.loc[index, 'eindlocatie']
+        if activiteit == 'idle':
+            df_omloop.loc[index, 'energieverbruik'] = 0.01
+        elif activiteit == 'dienst rit':
+            buslijn = df_omloop.loc[index, 'buslijn']
+            df_buslijn = df_afstand[df_afstand['buslijn'] == buslijn]
+            df_richting = df_buslijn[df_buslijn['startlocatie'] == start_locatie]
+            afstand_in_km = df_richting['afstand in meters']/1000
+            df_omloop.loc[index, 'energieverbruik'] = afstand_in_km * gem_verbruik
+        else:
+            df_afstand = df_afstand.loc[4:,:]
+            df_vertrek = df_afstand[df_afstand['startlocatie'] == start_locatie]
+            df_aankomst = df_vertrek[df_vertrek['eindlocate'] == eind_locatie]
+            afstand_in_km = df_aankomst['afstand in meters']/1000
+            df_omloop.loc[index, 'energieverbruik'] = afstand_in_km * gem_verbruik 
+    return df_omloop
 
 def efficientie_maar_dan_gemiddeld(bussen:list[object]):
     totaal = 0
@@ -271,3 +273,6 @@ def kpis_optellen(bussen:list[object]):
         materiaal_minuten += bus.materiaal_minuten
         bus_minuten += bus.busminuten
     return idle_minuten, materiaal_minuten, bus_minuten
+
+df_omloop = pd.read_excel('omloop planning energie verbruik test.xlsx')
+df_afstand = pd.read_excel('Connexxion data - 2023-2024.xlsx', sheet_name='Afstand matrix')
