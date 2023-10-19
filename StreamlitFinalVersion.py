@@ -261,14 +261,14 @@ def Bus_Specific_Scedule():
 ### COLUMN 2 ###
       ###   
 
-    data = {'Total minutes idle':"%.2f" % bussen[index_selected_bus-1].idle_minuten,
-            'Total minutes material ride': "%.2f" % bussen[index_selected_bus-1].materiaal_minuten,
-            'Total minutes of effective driving':"%.2f" % bussen[index_selected_bus-1].busminuten,
-            'Number of effective drives': bussen[index_selected_bus-1].ritten,
-            'Lowest amount of battery in kW-h':"%.3f" % bussen[index_selected_bus-1].min_lading,
-            'Final amount of battery in kW-h' :"%.3f" % bussen[index_selected_bus-1].eind_lading,
-            'Total minutes used':"%.2f" % bussen[index_selected_bus-1].totaal,
-            "Total efficiency":"%.3f" % bussen[index_selected_bus-1].efficientie}
+    data = {'Total idle time':f'{"%.2f" % bussen[index_selected_bus-1].idle_minuten} minutes',
+            'Total material ride time':f'{ "%.2f" % bussen[index_selected_bus-1].materiaal_minuten} minutes',
+            'Total time of effective driving':f'{"%.2f" % bussen[index_selected_bus-1].busminuten} minutes',
+            'Number of effective drives':f'{ bussen[index_selected_bus-1].ritten}',
+            'Lowest amount of battery':f'{"%.3f" % bussen[index_selected_bus-1].min_lading} kW-h',
+            'Final amount of battery' :f'{"%.3f" % bussen[index_selected_bus-1].eind_lading} kW-h',
+            'Total time used':f'{"%.2f" % bussen[index_selected_bus-1].totaal} minutes',
+            "Total efficiency":f'{"%.3f" % bussen[index_selected_bus-1].efficientie}'}
 
     for i in range(20): col2.write(" ")  
     col2.table(data)
@@ -322,7 +322,7 @@ else:
     st.sidebar.title("Navigation")
     selected_page = st.sidebar.selectbox(
         "Select a page",
-        ('Overview', 'Import New Excel', "Bus Specific Schedule", "Gantt Chart"),
+        ('Overview', "Bus Specific Schedule", "Gantt Chart",'Import New Excel'),
         index=0
     )
 
