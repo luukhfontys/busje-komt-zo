@@ -37,11 +37,11 @@ def upload_validate_page():
 
     #Omloop planning upload en dergelijke
     if st_omloop is not None:
-        df = pd.read_excel(st_omloop, index_col=0)
+        df_omloop = pd.read_excel(st_omloop, index_col=0)
         format_check = format_check_omloop(df_omloop)
 
         if all(format_check[:2]):
-            df_omloop = drop_tijdloze_activiteit(df)
+            df_omloop = drop_tijdloze_activiteit(df_omloop)
             bussen = to_class(df=df_omloop, batterij_waarde=(batterij_waarde_slider, batterij_waarde_slider * 0.1))
             onderbouwingen = return_invalid_busses(bussen)
             st.session_state['onderbouwingen'] = onderbouwingen
@@ -58,8 +58,8 @@ def upload_validate_page():
         
         #Dienstregeling upload en dergelijke
         if st_timetable is not None:
-            df_dienstregeling = pd.read_excel(st_timetable, sheet_name='Dienstregeling')
-            df_afstandsmatrix = pd.read_excel(st_timetable, sheet_name='Afstand matrix')
+            df_dienstregeling = pd.read_excel(st_timetable)
+            
             format_check_timetb = format_check_timetable(df_dienstregeling)
             if all(format_check_timetb[:2]):
                 checkdr = check_dienstregeling(df_dienstregeling, df_omloop)
