@@ -166,9 +166,15 @@ class bus:
             if self.activiteit[rit] == type_string:
                 begintijd = self.tijden[rit][0]
                 eindtijd = self.tijden[rit][1]
-                minuten += self.date_time_diff(begintijd=begintijd,eindtijd=eindtijd)
-                if self.date_time_diff(begintijd=begintijd, eindtijd=eindtijd) < 0:
-                    print(begintijd, self.omloopnummer)        
+                tijd = self.date_time_diff(begintijd=begintijd, eindtijd=eindtijd)
+                if tijd < 0:
+                    uur, minuut, sec = begintijd.split(':')
+                    uur = str(int(uur) - 12)
+                    begintijd = uur + ':' + minuut + ':' + sec
+                    uur, minuut, sec = eindtijd.split(':')
+                    uur = str(int(uur) + 12)
+                    eindtijd = uur + ':' + minuut + ':' + sec
+                minuten += self.date_time_diff(begintijd=begintijd,eindtijd=eindtijd)       
         return minuten
     
     def force_calc(self):

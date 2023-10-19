@@ -17,6 +17,20 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+def verberg_suffe_icoontjes():
+            st.markdown("""
+    <style>
+    /* Hide the link button */
+    .stApp a:first-child {
+        display: none;
+    }
+    
+    .css-15zrgzn {display: none}
+    .css-eczf16 {display: none}
+    .css-jn99sy {display: none}
+    </style>
+    """, unsafe_allow_html=True)
+
 # Start pagina en session_state variabelen initializen
 if 'page' not in st.session_state:
     st.session_state['page'] = 'Upload and validate'
@@ -29,6 +43,7 @@ if 'page' not in st.session_state:
 
 # Function for the "Upload and Validate" page
 def upload_validate_page():
+    verberg_suffe_icoontjes()
     st.title('Input Bus Schedule')
     st_omloop = st.file_uploader('Upload circulation planning', type=['xlsx'])
     st_timetable = st.file_uploader('Upload timetable', type=['xlsx'])
@@ -126,7 +141,9 @@ def upload_validate_page():
                     st.dataframe(format_check_timetb[3])
 
 def Overview():
+    verberg_suffe_icoontjes()
     def cs_sidebar_overview():
+        verberg_suffe_icoontjes()
         st.sidebar.markdown('---')    
         st.sidebar.markdown("## Overview", unsafe_allow_html=True)
         st.sidebar.markdown(
@@ -146,6 +163,7 @@ def Overview():
         return
 
     def cs_body_overview():
+        verberg_suffe_icoontjes()
         col1,col2  = st.columns([1,1])
         score = ['Fail','Unsatisfactory', 'Sufficient', 'Good', 'Excellent']
         #######################################
@@ -231,6 +249,7 @@ def Overview():
 
     return None
 def Bus_Specific_Scedule():
+    verberg_suffe_icoontjes()
     st.title(f"Bus Specific Scedule")
     container = st.container()
     col1, col2 = container.columns([2,1])
@@ -288,6 +307,7 @@ def Bus_Specific_Scedule():
 
 
 def Gantt_Chartbestand():    
+    verberg_suffe_icoontjes()
     st.markdown(
         """
         <style>
