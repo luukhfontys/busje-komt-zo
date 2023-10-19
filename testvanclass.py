@@ -15,10 +15,7 @@ print(energieverbruik_check(df=df, df_afstanden=df_afstands_matrix))
 
 bussen = to_class(df=df)
 for bus in bussen:
-    if bus.valide == 0:
-        print(bus.onderbouwing)
-    else:
-        print(bus.omloopnummer)
+    print(bus.busminuten)
 print(efficientie_maar_dan_gemiddeld(bussen=bussen))
 print(kpis_optellen(bussen=bussen))
 # for i in range(1):
