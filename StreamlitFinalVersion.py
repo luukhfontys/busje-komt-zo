@@ -1,3 +1,5 @@
+## Alle benodigde imports, vanuit eige gemaakte bestanden maar ook uit andere librarys
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -10,12 +12,16 @@ from Gantt_chart import Gantt_chart
 from Functie_to_class_format import *
 import plotly.express as px
 
+## Basis instellingen voor de streamlit pagina.
+
 st.set_page_config(
-    page_title='Bussie comes soon',
-    layout="wide",
-    page_icon="🚌",
-    initial_sidebar_state="expanded",
+    page_title='Bussie comes soon',         #Titel in browser
+    layout="wide",                          #Type pagina, deze is breed zodat hij het hele scherm vult
+    page_icon="🚌",                         #Icoontje van pagina
+    initial_sidebar_state="expanded",       #Zorgen dat het menu gelijk open staat
 )
+
+## Streamlit irritaties weghalen. Eerst hadden we bij elke titel een "Link" icoontje staan. Deze functie haalt dat weg.
 
 def verberg_suffe_icoontjes():
             st.markdown("""
@@ -31,36 +37,41 @@ def verberg_suffe_icoontjes():
     </style>
     """, unsafe_allow_html=True)
 
-# Start pagina en session_state variabelen initializen
+## Start pagina en session_state variabelen beginnen zodat deze tussen pagina's door worden meegenomen.
+
 if 'page' not in st.session_state:
-    st.session_state['page'] = 'Upload and validate'
-    st.session_state['df_omloop'] = None
-    st.session_state['df_timetable'] = None
-    st.session_state['format_check'] = None
-    st.session_state['onderbouwingen'] = None
-    st.session_state['batterij_slider'] = None
-    st.session_state['bussen'] = None
+    st.session_state['page'] = 'Upload and validate'    # Begin pagina kiezen
+    st.session_state['df_omloop'] = None                # Geimporteerde dataframe onthouden. Dit is het omloop schema.
+    st.session_state['df_timetable'] = None             # Geimporteerde dataframe onthouden. Dit is de afstand matrix.
+    st.session_state['format_check'] = None             # Format check klaarzetten, word gebruikt bij checken van de formatten.
+    st.session_state['onderbouwingen'] = None           # Als bij de importeer fase fouten worden gevonden in de data, neemt deze hem mee naar het overview
+    st.session_state['batterij_slider'] = None          # De startwaarde van de batterijen aan de hand van een slider.
+    st.session_state['bussen'] = None                   # Klaarzetten van de class bussen zodat deze mee kan op alle pagina's.
 
-# Function for the "Upload and Validate" page
+## Startpagina van de tool. Deze is als functie zodat als er gewisseld word in het menu, 
+## de functie kan worden uitgevoerd en de daadwerkelijk juiste pagina word laten zien aan de gebruiker.
+
 def upload_validate_page():
-    verberg_suffe_icoontjes()
-    st.title('Input Bus Schedule')
-    st_omloop = st.file_uploader('Upload circulation planning', type=['xlsx'])
-    st_timetable = st.file_uploader('Upload timetable', type=['xlsx'])
-    batterij_waarde_slider = st.slider('Select starting value battery in kW-h', 255, 285, 270)
-    st.session_state['batterij_slider'] = batterij_waarde_slider
+    verberg_suffe_icoontjes()               # Hier halen we dus die icoontjes mee weg.
+    st.title('Input Bus Schedule')          # Titel wat er bovenaan de pagina komt te staan.
+    st_omloop = st.file_uploader('Upload circulation planning', type=['xlsx'])  # Hier maken we een knop waar de gebruiker een excel bestand kan invoeren.
+    st_timetable = st.file_uploader('Upload timetable', type=['xlsx'])          # Hier maken we een tweede knop waar de gebruiker een excel bestand kan invoeren.
+    batterij_waarde_slider = st.slider('Select starting value battery in kW-h', 255, 285, 270)  # Hier maken we de slider voor de begin waarde van de batterij. De uiterste waarde zijn de meegeven data vanuit transdev. 
+    st.session_state['batterij_slider'] = batterij_waarde_slider                # De session state van de slider word hier vervangen van None naar de waarde die in de slider is meegegeven.
 
-    #Omloop planning upload en dergelijke
-    if st_omloop is not None:
-        df_omloop = pd.read_excel(st_omloop, index_col=0)
-        format_check = format_check_omloop(df_omloop)
+    ## We gaan hier de excel bestanden omschrijven naar dataframes. 
+    ## Hier wordt ook gecontroleerd of de opgegeven excelbestanden voldoen aan de vereiste formatten.
 
-        if all(format_check[:2]):
-            error_format_omloop = False
-            df_omloop = drop_tijdloze_activiteit(df_omloop)
-            bussen = to_class(df=df_omloop, batterij_waarde=(batterij_waarde_slider, batterij_waarde_slider * 0.1))
-            onderbouwingen = return_invalid_busses(bussen)
-            st.session_state['onderbouwingen'] = onderbouwingen
+    if st_omloop is not None:       # Kijken of er een bestand is opgegeven.
+        df_omloop = pd.read_excel(st_omloop, index_col=0)   # Omschrijven naar een dataframe.
+        format_check = format_check_omloop(df_omloop)       # Controleren of het format klopt. Dit is een functie uit Functions.py
+
+        if all(format_check[:2]):           # Hier word gekeken of de output van format_check_omloop klopt.
+            error_format_omloop = False     # Dit klopt. Dus zijn er geen errors gevonden.
+            df_omloop = drop_tijdloze_activiteit(df_omloop)     # Hier halen we alle activiteiten met een duur van 0 minuten uit de dataset.
+            bussen = to_class(df=df_omloop, batterij_waarde=(batterij_waarde_slider, batterij_waarde_slider * 0.1))     # Hier roepen de class bussen aan.
+            onderbouwingen = return_invalid_busses(bussen)          # Hier controleren we of er bussen zijn die fouten maken.
+            st.session_state['onderbouwingen'] = onderbouwingen     # Hier word de session state vervangen van None naar deze fouten zodat ze kunnen worden meegenomen naar de overview pagina.
             st.success('Data upload successful.')
             dubbelecheck = 12
 
