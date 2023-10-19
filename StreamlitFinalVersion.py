@@ -38,10 +38,10 @@ def upload_validate_page():
     #Omloop planning upload en dergelijke
     if st_omloop is not None:
         df = pd.read_excel(st_omloop, index_col=0)
-        df_omloop = drop_tijdloze_activiteit(df)
         format_check = format_check_omloop(df_omloop)
 
         if all(format_check[:2]):
+            df_omloop = drop_tijdloze_activiteit(df)
             bussen = to_class(df=df_omloop, batterij_waarde=(batterij_waarde_slider, batterij_waarde_slider * 0.1))
             onderbouwingen = return_invalid_busses(bussen)
             st.session_state['onderbouwingen'] = onderbouwingen
