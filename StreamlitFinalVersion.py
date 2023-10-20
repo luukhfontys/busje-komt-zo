@@ -152,9 +152,7 @@ def upload_validate_page():
                     st.dataframe(format_check_timetb[3])
 
 def Overview():
-    verberg_suffe_icoontjes()
     def cs_sidebar_overview():
-        verberg_suffe_icoontjes()
         st.sidebar.markdown('---')    
         st.sidebar.markdown("## Overview", unsafe_allow_html=True)
         st.sidebar.markdown(
@@ -165,16 +163,13 @@ def Overview():
             "<small>If a different bus planning is desired, use 'Import New Excel' option in the menu.</small>",
             unsafe_allow_html=True
         )
-        
-        st.sidebar.markdown('<small>Explore our [User Manual](https://hubble.cafe/) for step-by-step guidance on using this tool.</small>', unsafe_allow_html=True)
-        
+        st.sidebar.markdown("<small>Explore the [user manual](https://hubble.cafe/) for step-by-step guidance on using this tool.</small>", unsafe_allow_html=True)
         st.sidebar.markdown('---')
 
         
         return
 
     def cs_body_overview():
-        verberg_suffe_icoontjes()
         col1,col2  = st.columns([1,1])
         score = ['Fail','Unsatisfactory', 'Sufficient', 'Good', 'Excellent']
         #######################################
