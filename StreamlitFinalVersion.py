@@ -72,13 +72,13 @@ def upload_validate_page():
             bussen = to_class(df=df_omloop, batterij_waarde=(batterij_waarde_slider, batterij_waarde_slider * 0.1))     # Hier roepen de class bussen aan.
             onderbouwingen = return_invalid_busses(bussen)          # Hier controleren we of er bussen zijn die fouten maken.
             st.session_state['onderbouwingen'] = onderbouwingen     # Hier word de session state vervangen van None naar deze fouten zodat ze kunnen worden meegenomen naar de overview pagina.
-            st.success('Data upload successful.')
-            dubbelecheck = 12
+            st.success('Data upload successful.')                   # Melding in het groen dat de data succesvol is ontvangen.
+            dubbelecheck = 12                                       # Dit is een check om te kijken of de data goed is ontvangen. Komt later weer aanpas.
 
-        else:
-            error_format_omloop = True
-            st.error(f"Error: Your data does not meet the required format.")
-            if not format_check[0]:
+        else: 
+            error_format_omloop = True          # Er zitten fouten in de dataset.
+            st.error(f"Error: Your data does not meet the required format.")    # Foutmelding dat de ingevoerde data fouttief is. 
+            if not format_check[0]: # Hier controleren we wat de foutmelding is
                 st.error("Headers are not in format: [index, 'startlocatie', 'eindlocatie', 'starttijd', 'eindtijd', 'activiteit', 'buslijn', 'energieverbruik', 'starttijd datum', 'eindtijd datum', 'omloop nummer']")
             if not format_check[1]:
                 st.error(f'The following (row, colum) data points are not of the right type: {format_check[2]} \n For cell errors: see marked dataframe below: ')
@@ -251,10 +251,6 @@ def Overview():
     - Improving average efficiency.
     """
 )
-
-
-       
-
     cs_sidebar_overview()
     cs_body_overview()
 
@@ -274,7 +270,7 @@ def Bus_Specific_Scedule():
         totale_bussen.append(f'Bus line {i}')
 
     selected_Bus = st.sidebar.selectbox(
-        "Select a specific busline",
+        "Select a specific bus line",
         (totale_bussen),
         index=0
     )
@@ -288,9 +284,6 @@ def Bus_Specific_Scedule():
     bussen = st.session_state['bussen']
     fig2 = make_plot(bussen[index_selected_bus - 1], False)
     col1.pyplot(fig2, transparent=True)
-    
-
-
       ###
 ### COLUMN 2 ###
       ###   
@@ -337,18 +330,6 @@ def Gantt_Chartbestand():
     fig.update_layout(
         width=1200, height=700, legend_x=1, legend_y=1)
     st.plotly_chart(fig)
-
-
-
-
-
-
-
-
-
-
-
-
 
 if st.session_state['page'] == 'Upload and validate' or st.session_state['page'] == 'Import New Excel':
     upload_validate_page()
