@@ -284,6 +284,7 @@ def Bus_Specific_Scedule():
     bussen = st.session_state['bussen']
     fig2 = make_plot(bussen[index_selected_bus - 1], False)
     col1.pyplot(fig2, transparent=True)
+    
       ###
 ### COLUMN 2 ###
       ###   
