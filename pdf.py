@@ -5,11 +5,11 @@ from pdf2image import convert_from_path
 import streamlit as st
 
 st.set_page_config(
-    page_title='Bussie on its way user manual',    #Titel in browser
+    page_title='User Manual',    #Titel in browser
     page_icon="📖",                               #Icoontje van pagina
 )
 
-st.title('Bussie comes soon usermanual')
+st.title('Bussie comes soon user manual')
 
 pdf_path = "User Manual.pdf"
 images = convert_from_path(pdf_path)
