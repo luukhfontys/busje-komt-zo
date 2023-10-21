@@ -11,7 +11,7 @@ st.set_page_config(
 
 st.title('Bussie on its way user manual')
 
-pdf_path = "User Manual.pdf"
+pdf_path = "User Manual generic.pdf"
 images = convert_from_path(pdf_path)
 
 for image in images:
