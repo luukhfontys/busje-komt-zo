@@ -251,9 +251,9 @@ def Overview():
     cs_body_overview()
 
     return None
-def Bus_Specific_Scedule():
+def Bus_Specific_Schedule():
     verberg_suffe_icoontjes()
-    st.title(f"Bus Specific Scedule")
+    st.title(f"Bus Specific Schedule")
     container = st.container()
     col1, col2 = container.columns([2,1])
 
@@ -274,7 +274,7 @@ def Bus_Specific_Scedule():
 
 
     fig = Gantt_chart(df_omloop[df_omloop['omloop nummer'] == index_selected_bus])
-    fig.update_layout(yaxis=dict(showticklabels=False), title_text= f'Scedule {selected_Bus}',showlegend=False, height=350, width=1150)
+    fig.update_layout(yaxis=dict(showticklabels=False), title_text= f'Schedule {selected_Bus}',showlegend=False, height=350, width=1150)
 
     col1.plotly_chart(fig)
     bussen = st.session_state['bussen']
@@ -300,10 +300,10 @@ def Bus_Specific_Scedule():
 ###  BODY ###
       ###
     if 'begintijd' not in df_omloop.columns:
-        expander = st.expander(label=("For a detailed scedule click here"))
+        expander = st.expander(label=("For a detailed schedule click here"))
         expander.table((df_omloop[df_omloop['omloop nummer'] == index_selected_bus]))
     else:
-        expander = st.expander(label=("For a detailed scedule click here"))
+        expander = st.expander(label=("For a detailed schedule click here"))
         expander.table((df_omloop[df_omloop['omloop nummer'] == index_selected_bus]).drop(columns=['begintijd', 'lengte']))
 
 
@@ -346,6 +346,6 @@ else:
         st.session_state['page'] = selected_page
         st.experimental_rerun()
     elif selected_page == "Bus Specific Schedule":
-        Bus_Specific_Scedule()
+        Bus_Specific_Schedule()
     elif selected_page == 'Gantt Chart':
         Gantt_Chartbestand()
