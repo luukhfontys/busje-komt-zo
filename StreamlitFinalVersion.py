@@ -164,7 +164,7 @@ def Overview():
             "<small>If a different bus planning is desired, use 'Import New Excel' option in the menu.</small>",
             unsafe_allow_html=True
         )
-        st.sidebar.markdown("<small>Explore the [user manual](https://hubble.cafe/) for step-by-step guidance on using this tool.</small>", unsafe_allow_html=True)
+        st.sidebar.markdown("<small>Explore the [user manual](https://bussie-on-its-way-usermanual.streamlit.app/) for step-by-step guidance on using this tool.</small>", unsafe_allow_html=True)
         st.sidebar.markdown('---')
 
         
