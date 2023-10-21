@@ -128,6 +128,7 @@ def upload_validate_page():
                             
                             if st.button('Next (Normalize abnormal values)'):
                                 df_omloop = aanpassen_naar_gemiddeld(df_omloop, df_afstandsmatrix, energieverbruikrows)
+                                bussen = to_class(df=df_omloop, batterij_waarde=(batterij_waarde_slider, batterij_waarde_slider * 0.1))
                                 st.success("Values succesfully normalised, to continue, please press the Next (Normalize abnormal values) button again.")
                                 dataframe.empty()
                                 warning1.empty()
