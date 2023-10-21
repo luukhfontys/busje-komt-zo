@@ -1,7 +1,7 @@
 streamlit
+pdf2image
 pandas
 numpy
 matplotlib
 plotly
 openpyxl
-pdf2image

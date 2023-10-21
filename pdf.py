@@ -6,7 +6,7 @@ import streamlit as st
 
 st.set_page_config(
     page_title='Bussie comes soon usermanual',    #Titel in browser
-    page_icon="📖",                               #Icoontje van pagina#Zorgen dat het menu gelijk open staat
+    page_icon="📖",                               #Icoontje van pagina
 )
 
 st.title('Bussie comes soon usermanual')
