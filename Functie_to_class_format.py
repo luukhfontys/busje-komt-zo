@@ -94,12 +94,13 @@ def make_plot(bus: object, kleurenblind: bool = False):
         kleur1 = 'lime'
         kleur2 = 'red'
 
-    fig, ax = plt.subplots(figsize=(10,3))  # Create a new figure and axes
+    fig, ax = plt.subplots(figsize=(10, 3))  # Create a new figure and axes
     ax.plot(bus.batterij_geschiedenis, color=kleur1)
     ax.plot([bus.batterijstart[1]] * len(bus.batterij_geschiedenis), color=kleur2)
     plt.xlabel("Activity number")
     plt.ylabel("Amount of battery in kW-h")
-
+    line1, = ax.plot(bus.batterij_geschiedenis, color=kleur1)
+    line2, = ax.plot([bus.batterijstart[1]] * len(bus.batterij_geschiedenis), color=kleur2)
     ax.set_facecolor('white')
 
     # Set the color of the axes, including border color, to white
@@ -114,7 +115,12 @@ def make_plot(bus: object, kleurenblind: bool = False):
     ax.tick_params(axis='x', colors='white')
     ax.tick_params(axis='y', colors='white')
 
-    return fig 
+    # Create a legend and make its background transparent
+    legend = ax.legend([line1, line2], ['Battery in kW-h', 'Minimal battery value'], frameon=False)
+    for text in legend.get_texts():
+        text.set_color('white')
+
+    return fig
 
 def drop_tijdloze_activiteit(df:pd.DataFrame):
     indexen_met_tijd_0 = []
