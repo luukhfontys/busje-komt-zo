@@ -3,6 +3,12 @@ from pathlib import Path
 
 import streamlit as st
 
+st.set_page_config(
+    page_title='Bussie comes soon usermanual',         #Titel in browser
+    layout="wide",                          #Type pagina, deze is breed zodat hij het hele scherm vult
+    page_icon="📖",                         #Icoontje van pagina#Zorgen dat het menu gelijk open staat
+)
+
 pdf_path = Path("Runningdinnerprobleem Vughterpoort 2023 - Conceptueel model (3).pdf")
 
 base64_pdf = base64.b64encode(pdf_path.read_bytes()).decode("utf-8")
