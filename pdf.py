@@ -1,18 +1,18 @@
 import base64
 from pathlib import Path
+from pdf2image import convert_from_path
 
 import streamlit as st
 
 st.set_page_config(
-    page_title='Bussie comes soon usermanual',         #Titel in browser
-    layout="wide",                          #Type pagina, deze is breed zodat hij het hele scherm vult
-    page_icon="📖",                         #Icoontje van pagina#Zorgen dat het menu gelijk open staat
+    page_title='Bussie comes soon usermanual',    #Titel in browser
+    page_icon="📖",                               #Icoontje van pagina#Zorgen dat het menu gelijk open staat
 )
 
-pdf_path = Path("Runningdinnerprobleem Vughterpoort 2023 - Conceptueel model (3).pdf")
+st.title('Bussie comes soon usermanual')
 
-base64_pdf = base64.b64encode(pdf_path.read_bytes()).decode("utf-8")
-pdf_display = f"""
-    <iframe src="data:application/pdf;base64,{base64_pdf}" width="800px" height="2100px" type="application/pdf"></iframe>
-"""
-st.markdown(pdf_display, unsafe_allow_html=True)
+pdf_path = "Runningdinnerprobleem Vughterpoort 2023 - Conceptueel model (3).pdf"
+images = convert_from_path(pdf_path)
+
+for image in images:
+    st.image(image, use_column_width=True)
