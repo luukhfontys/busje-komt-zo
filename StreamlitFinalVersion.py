@@ -87,16 +87,18 @@ def upload_validate_page():
         #Dienstregeling upload en dergelijke
         if st_timetable is not None:
             df_dienstregeling = pd.read_excel(st_timetable)
-            
+            format_check_afstandm = [True, True]
             format_check_timetb = format_check_timetable(df_dienstregeling)
             try:
                 df_afstandsmatrix = pd.read_excel(st_timetable, sheet_name='Afstand matrix')
+                format_check_afstandm = format_check_afstandmatrix(df_afstandsmatrix)
                 read_success_afstandsmatrix = True
             except Exception as e:
+                st.error(e)
                 df_afstandsmatrix = None
                 read_success_afstandsmatrix = False
             
-            if all(format_check_timetb[:2]) and read_success_afstandsmatrix:
+            if all(format_check_timetb[:2]) and read_success_afstandsmatrix and all(format_check_afstandm[:2]):
                 checkdr = check_dienstregeling(df_dienstregeling, df_omloop)
                 compleet = checkdr[0]
                 reden = checkdr[1]
@@ -138,8 +140,7 @@ def upload_validate_page():
                                 st.session_state['format_check'] = format_check
                                 st.session_state['page'] = 'Overview'
                                 st.session_state['bussen'] = bussen
-                            
-                            
+                                       
                 else:
                     st.error("Timetable is not correct: " + reden)
                     if read_success_afstandsmatrix == False:
@@ -151,7 +152,16 @@ def upload_validate_page():
                 if not format_check_timetb[1]:
                     st.error(f'The following (row, colum) data points are not of the right type: {format_check_timetb[2]} \n For cell errors: see marked dataframe below: ')
                     st.dataframe(format_check_timetb[3])
+                if read_success_afstandsmatrix == True:
+                    if not format_check_afstandm[0]:
+                        st.error("Headers of distance matrix are not in format: ['startlocatie', 'eindlocatie', 'min reistijd in min', 'max reistijd in min', 'afstand in meters', 'buslijn']")
+                    if not format_check_afstandm[1]:
+                        st.error(f'The following (row, colum) data points of the distance matrix are not of the right type: {format_check_afstandm[2]} \n For cell errors: see marked dataframe below: ')
+                        st.dataframe(format_check_afstandm[3])
+                if read_success_afstandsmatrix == False:
+                    st.error("Distance matrix sheet missing in timetable")
 
+                
 def Overview():
     def cs_sidebar_overview():
         st.sidebar.markdown('---')    
