@@ -66,7 +66,7 @@ def upload_validate_page():
         df_omloop = pd.read_excel(st_omloop, index_col=0)   # Omschrijven naar een dataframe.
         format_check = format_check_omloop(df_omloop)       # Controleren of het format klopt. Dit is een functie uit Functions.py
 
-        if all(format_check[:2]):           # Hier word gekeken of de output van format_check_omloop klopt.
+        if all(format_check[0:2]):           # Hier word gekeken of de output van format_check_omloop klopt.
             error_format_omloop = False     # Dit klopt. Dus zijn er geen errors gevonden.
             df_omloop = drop_tijdloze_activiteit(df_omloop)     # Hier halen we alle activiteiten met een duur van 0 minuten uit de dataset.
             bussen = to_class(df=df_omloop, batterij_waarde=(batterij_waarde_slider, batterij_waarde_slider * 0.1))     # Hier roepen de class bussen aan.
@@ -97,7 +97,7 @@ def upload_validate_page():
                 df_afstandsmatrix = None
                 read_success_afstandsmatrix = False
             
-            if all(format_check_timetb[:2]) and read_success_afstandsmatrix and all(format_check_afstandm[:2]):
+            if all(format_check_timetb[0:2]) and read_success_afstandsmatrix and all(format_check_afstandm[0:2]):
                 checkdr = check_dienstregeling(df_dienstregeling, df_omloop)
                 compleet = checkdr[0]
                 reden = checkdr[1]
@@ -194,7 +194,7 @@ def Overview():
         df_omloop = st.session_state['df_omloop']
         format_check = st.session_state['format_check']
         
-        if all(format_check[:2]):
+        if all(format_check[0:2]):
             col2.plotly_chart(Gantt_chart(df_omloop))
             error_count = 0
             #col2.write('Editable dataframe:')
