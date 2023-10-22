@@ -94,7 +94,6 @@ def upload_validate_page():
                 format_check_afstandm = format_check_afstandmatrix(df_afstandsmatrix)
                 read_success_afstandsmatrix = True
             except Exception as e:
-                st.error(e)
                 df_afstandsmatrix = None
                 read_success_afstandsmatrix = False
             
