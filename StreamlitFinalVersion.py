@@ -223,11 +223,11 @@ def Overview():
                     'Value': [f'{"%.2f" % data1} minutes',f' {"%.2f" % data2} minutes',f'{"%.2f" %  data3} minutes',"%.3f" %  data4 ]}
             col1.title('The busplanning :green[passes]!')
             
-            if 0 <= data4 <= 1.2:
+            if 0 <= data4 <= 0.6:
                 col1.header(f"The score of the planning is: :orange[{score[2]}]")
-            elif 1.2 < data4 <= 1.7:
+            elif 0.6 < data4 <= 0.8:
                 col1.header(f"The score of the planning is: :green[{score[3]}]")
-            elif 1.75 < data4 :
+            elif 0.8 < data4 :
                 col1.header(f"The score of the planning is: :green[{score[4]}]")    
             col1.subheader(f"The current performance indicators are:")    
             col1.table(data)
