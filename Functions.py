@@ -72,7 +72,7 @@ def format_check_timetable(df_planning):
 def format_check_afstandmatrix(df_planning):
     header_format = ['startlocatie', 'eindlocatie', 'min reistijd in min', 'max reistijd in min', 'afstand in meters', 'buslijn']
     df_headers = df_planning.columns.values.tolist()
-    type_format = [str, str, (int, float, np.int64), (int, float, np.int64), (int, float, np.int64), Union[int, float, np.int64, None]]
+    type_format = [str, str, (int, float, np.int64), (int, float, np.int64), (int, float, np.int64), any]
 
     header_check = False
     if header_format == df_headers: header_check = True
