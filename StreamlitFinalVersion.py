@@ -140,10 +140,6 @@ def upload_validate_page():
                                 st.session_state['page'] = 'Overview'
                                 st.session_state['bussen'] = bussen
                                        
-                else:
-                    st.error("Timetable is not correct: " + reden)
-                    if read_success_afstandsmatrix == False:
-                        st.error("Distance matrix sheet missing in timetable")
             else:
                 st.error(f"Error: Your timetable does not meet the required format.")
                 if not format_check_timetb[0]:
