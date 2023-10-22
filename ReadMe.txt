@@ -1,13 +1,13 @@
-ReadMe file concerning planning checking tool designed for transdev
+ReadMe file concerning Tool bus schedule
 
 Instructions:
-1) open StreamlitFinalVersion.py
-2) open the terminal
-3) enter: pip install streamlit
-4) wait for finished install
-5) enter: streamlit run StreamlitFinalVersion.py
+1) Open StreamlitFinalVersion.py
+2) Open the terminal
+3) Enter: pip install streamlit
+4) Wait for finished install
+5) Enter: streamlit run StreamlitFinalVersion.py
 
 *** DISCLAIMER ***
-all information provided by the tool is advisory.
+All information provided by the tool is advisory.
 The user will be responsible for any decisions made.
 
