@@ -14,14 +14,25 @@ class lege_bus:
         self.buslijn = []
         self.energie_verbruik = []
         self.omloopnummer = omloopnummer
+        self.batterij_huidig = batterij
+        self.locatie_huidig = 'ehvgar'
         
-    def toevoegen_rit(self):
+    def toevoegen_rit(self, starttijd, eindtijd, start_locatie, eind_locatie, verbruik, activiteit, buslijn=''):
         check = self.controleer_verbruik()
-        if not check:
+        if not check[0]:
             return False
-        else:
-            'snaaien gvd, verdomme milou'
-        return
+        self.update_waardes(starttijd=starttijd, eindtijd=eindtijd, start_locatie=start_locatie, eind_locatie=eind_locatie, verbruik=verbruik, activiteit=activiteit, buslijn=buslijn)
+        self.locatie_huidig = eind_locatie
+        return True
+    
+    def update_waardes(self, starttijd, eindtijd, start_locatie, eind_locatie, verbruik, activiteit, buslijn=''):
+        self.starttijden.append(starttijd)
+        self.eindtijden.append(eindtijd)
+        self.start_locaties.append(start_locatie)
+        self.eind_locaties.append(eind_locatie)
+        self.energie_verbruik.append(verbruik)
+        self.activiteit.append(activiteit)
+        self.buslijn.append(buslijn)
     
 
     def controleer_verbruik(self, verbruik1, verbruik2, verbruik3):
