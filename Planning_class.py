@@ -17,11 +17,19 @@ class lege_bus:
         self.batterij_huidig = batterij
         self.locatie_huidig = 'ehvgar'
         
-    def toevoegen_rit(self, starttijd, eindtijd, start_locatie, eind_locatie, verbruik, activiteit, buslijn=''):
-        check = self.controleer_verbruik()
-        if not check[0]:
+    def toevoegen_rit(self, starttijd, eindtijd, start_locatie, eind_locatie, verbruik1,  verbruik2, verbruik3, buslijn=''):
+        check = self.controleer_verbruik(verbruik1=verbruik1, verbruik2=verbruik2, verbruik3=verbruik3)
+        if not check:
             return False
-        self.update_waardes(starttijd=starttijd, eindtijd=eindtijd, start_locatie=start_locatie, eind_locatie=eind_locatie, verbruik=verbruik, activiteit=activiteit, buslijn=buslijn)
+        if self.locatie_huidig != start_locatie:
+            self.update_waardes(starttijd=starttijd, eindtijd=eindtijd,
+                            start_locatie=self.locatie_huidig, eind_locatie=start_locatie,
+                            verbruik=verbruik3, activiteit='Materiaal rit')
+            
+        self.update_waardes(starttijd=starttijd, eindtijd=eindtijd,
+                            start_locatie=start_locatie, eind_locatie=eind_locatie,
+                            verbruik=verbruik1, activiteit='Dienst rit', buslijn=buslijn)
+        
         self.locatie_huidig = eind_locatie
         return True
     
