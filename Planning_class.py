@@ -20,6 +20,6 @@ class lege_bus:
         return
     
     def controleer_verbruik(self):
+        print('Help Paul gaat slaan')
         
-        return
         
