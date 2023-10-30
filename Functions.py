@@ -23,8 +23,8 @@ def format_check_omloop(df_planning):
         for i in range(df_planning.shape[0]):
             df_types = df_planning.iloc[i]
             for j in range(len(df_types)):
-                if not isinstance(df_types[j], type_format[j]):
-                    print(df_types[j], type_format[j])
+                if not isinstance(df_types.iloc[j], type_format[j]):
+                    print(df_types.iloc[j], type_format[j])
                     type_check = False
                     foute_datapunten.append((i, j))
                     df_planning_error_cells.iat[i, j] = 'background-color: red'
@@ -55,8 +55,8 @@ def format_check_timetable(df_planning):
         for i in range(df_planning.shape[0]):
             df_types = df_planning.iloc[i]
             for j in range(len(df_types)):
-                if not isinstance(df_types[j], type_format[j]):
-                    print(df_types[j], type_format[j])
+                if not isinstance(df_types.iloc[j], type_format[j]):
+                    print(df_types.iloc[j], type_format[j])
                     type_check = False
                     foute_datapunten.append((i, j))
                     df_planning_error_cells.iat[i, j] = 'background-color: red'
@@ -68,6 +68,40 @@ def format_check_timetable(df_planning):
     else:
         return header_check, True, []
     
+def format_check_afstandmatrix(df_planning):
+    header_format = ['startlocatie', 'eindlocatie', 'min reistijd in min', 'max reistijd in min', 'afstand in meters', 'buslijn']
+    df_headers = df_planning.columns.values.tolist()
+    type_format = [str, str, (int, float, np.int64), (int, float, np.int64), (int, float, np.int64)]
+
+    header_check = False
+    if header_format == df_headers: header_check = True
+
+    type_check = True
+    foute_datapunten = [] #[(rij, kolom), (rij, kolom), ... ]
+
+    df_planning_error_cells = pd.DataFrame('', index=df_planning.index, columns=df_planning.columns)
+
+    if header_check:
+        for i in range(df_planning.shape[0]):
+            df_types = df_planning.iloc[i]
+            for j in range(len(df_types)-1):
+                if not isinstance(df_types.iloc[j], type_format[j]):
+                    print(df_types.iloc[j], type_format[j])
+                    type_check = False
+                    foute_datapunten.append((i, j))
+                    df_planning_error_cells.iat[i, j] = 'background-color: red'
+
+    df_planning_errors = df_planning.style.apply(lambda x: df_planning_error_cells, axis=None)
+
+    if header_check:
+        return header_check, type_check, foute_datapunten, df_planning_errors
+    else:
+        return header_check, True, []
+    
+# df = pd.read_excel('Connexxion data - 2023-2024.xlsx', sheet_name='Afstand matrix')
+# x = format_check_afstandmatrix(df)
+# y=1
+
 def prestatiemaat_materiaal_minuten(df_planning: pd.DataFrame) -> tuple[float, float]:
     """
     Deze functie neemt de omloop planning in vorm van pandas dataframe en output vervolgens

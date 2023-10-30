@@ -66,7 +66,7 @@ def upload_validate_page():
         df_omloop = pd.read_excel(st_omloop, index_col=0)   # Omschrijven naar een dataframe.
         format_check = format_check_omloop(df_omloop)       # Controleren of het format klopt. Dit is een functie uit Functions.py
 
-        if all(format_check[:2]):           # Hier word gekeken of de output van format_check_omloop klopt.
+        if all(format_check[0:2]):           # Hier word gekeken of de output van format_check_omloop klopt.
             error_format_omloop = False     # Dit klopt. Dus zijn er geen errors gevonden.
             df_omloop = drop_tijdloze_activiteit(df_omloop)     # Hier halen we alle activiteiten met een duur van 0 minuten uit de dataset.
             bussen = to_class(df=df_omloop, batterij_waarde=(batterij_waarde_slider, batterij_waarde_slider * 0.1))     # Hier roepen de class bussen aan.
@@ -87,16 +87,18 @@ def upload_validate_page():
         #Dienstregeling upload en dergelijke
         if st_timetable is not None:
             df_dienstregeling = pd.read_excel(st_timetable)
-            
+            format_check_afstandm = [True, True]
             format_check_timetb = format_check_timetable(df_dienstregeling)
             try:
                 df_afstandsmatrix = pd.read_excel(st_timetable, sheet_name='Afstand matrix')
+                format_check_afstandm = format_check_afstandmatrix(df_afstandsmatrix)
                 read_success_afstandsmatrix = True
             except Exception as e:
+                print(e)
                 df_afstandsmatrix = None
                 read_success_afstandsmatrix = False
             
-            if all(format_check_timetb[:2]) and read_success_afstandsmatrix:
+            if all(format_check_timetb[0:2]) and read_success_afstandsmatrix and all(format_check_afstandm[0:2]):
                 checkdr = check_dienstregeling(df_dienstregeling, df_omloop)
                 compleet = checkdr[0]
                 reden = checkdr[1]
@@ -128,6 +130,7 @@ def upload_validate_page():
                             
                             if st.button('Next (Normalize abnormal values)'):
                                 df_omloop = aanpassen_naar_gemiddeld(df_omloop, df_afstandsmatrix, energieverbruikrows)
+                                bussen = to_class(df=df_omloop, batterij_waarde=(batterij_waarde_slider, batterij_waarde_slider * 0.1))
                                 st.success("Values succesfully normalised, to continue, please press the Next (Normalize abnormal values) button again.")
                                 dataframe.empty()
                                 warning1.empty()
@@ -137,12 +140,7 @@ def upload_validate_page():
                                 st.session_state['format_check'] = format_check
                                 st.session_state['page'] = 'Overview'
                                 st.session_state['bussen'] = bussen
-                            
-                            
-                else:
-                    st.error("Timetable is not correct: " + reden)
-                    if read_success_afstandsmatrix == False:
-                        st.error("Distance matrix sheet missing in timetable")
+                                       
             else:
                 st.error(f"Error: Your timetable does not meet the required format.")
                 if not format_check_timetb[0]:
@@ -150,7 +148,16 @@ def upload_validate_page():
                 if not format_check_timetb[1]:
                     st.error(f'The following (row, colum) data points are not of the right type: {format_check_timetb[2]} \n For cell errors: see marked dataframe below: ')
                     st.dataframe(format_check_timetb[3])
+                if read_success_afstandsmatrix == True:
+                    if not format_check_afstandm[0]:
+                        st.error("Headers of distance matrix are not in format: ['startlocatie', 'eindlocatie', 'min reistijd in min', 'max reistijd in min', 'afstand in meters', 'buslijn']")
+                    if not format_check_afstandm[1]:
+                        st.error(f'The following (row, colum) data points of the distance matrix are not of the right type: {format_check_afstandm[2]} \n For cell errors: see marked dataframe below: ')
+                        st.dataframe(format_check_afstandm[3])
+                if read_success_afstandsmatrix == False:
+                    st.error("Distance matrix sheet missing in timetable")
 
+                
 def Overview():
     def cs_sidebar_overview():
         st.sidebar.markdown('---')    
@@ -163,7 +170,7 @@ def Overview():
             "<small>If a different bus planning is desired, use 'Import New Excel' option in the menu.</small>",
             unsafe_allow_html=True
         )
-        st.sidebar.markdown("<small>Explore the [user manual](https://hubble.cafe/) for step-by-step guidance on using this tool.</small>", unsafe_allow_html=True)
+        st.sidebar.markdown("<small>Explore the [user manual](https://bussie-on-its-way-usermanual.streamlit.app/) for step-by-step guidance on using this tool.</small>", unsafe_allow_html=True)
         st.sidebar.markdown('---')
 
         
@@ -184,7 +191,7 @@ def Overview():
         df_omloop = st.session_state['df_omloop']
         format_check = st.session_state['format_check']
         
-        if all(format_check[:2]):
+        if all(format_check[0:2]):
             col2.plotly_chart(Gantt_chart(df_omloop))
             error_count = 0
             #col2.write('Editable dataframe:')
@@ -212,11 +219,11 @@ def Overview():
                     'Value': [f'{"%.2f" % data1} minutes',f' {"%.2f" % data2} minutes',f'{"%.2f" %  data3} minutes',"%.3f" %  data4 ]}
             col1.title('The busplanning :green[passes]!')
             
-            if 0 <= data4 <= 1.2:
+            if 0 <= data4 <= 0.6:
                 col1.header(f"The score of the planning is: :orange[{score[2]}]")
-            elif 1.2 < data4 <= 1.7:
+            elif 0.6 < data4 <= 0.8:
                 col1.header(f"The score of the planning is: :green[{score[3]}]")
-            elif 1.75 < data4 :
+            elif 0.8 < data4 :
                 col1.header(f"The score of the planning is: :green[{score[4]}]")    
             col1.subheader(f"The current performance indicators are:")    
             col1.table(data)
@@ -250,9 +257,9 @@ def Overview():
     cs_body_overview()
 
     return None
-def Bus_Specific_Scedule():
+def Bus_Specific_Schedule():
     verberg_suffe_icoontjes()
-    st.title(f"Bus Specific Scedule")
+    st.title(f"Bus Specific Schedule")
     container = st.container()
     col1, col2 = container.columns([2,1])
 
@@ -273,7 +280,7 @@ def Bus_Specific_Scedule():
 
 
     fig = Gantt_chart(df_omloop[df_omloop['omloop nummer'] == index_selected_bus])
-    fig.update_layout(yaxis=dict(showticklabels=False), title_text= f'Scedule {selected_Bus}',showlegend=False, height=350, width=1150)
+    fig.update_layout(yaxis=dict(showticklabels=False), title_text= f'Schedule {selected_Bus}',showlegend=False, height=350, width=1150)
 
     col1.plotly_chart(fig)
     bussen = st.session_state['bussen']
@@ -299,10 +306,10 @@ def Bus_Specific_Scedule():
 ###  BODY ###
       ###
     if 'begintijd' not in df_omloop.columns:
-        expander = st.expander(label=("For a detailed scedule click here"))
+        expander = st.expander(label=("For a detailed schedule click here"))
         expander.table((df_omloop[df_omloop['omloop nummer'] == index_selected_bus]))
     else:
-        expander = st.expander(label=("For a detailed scedule click here"))
+        expander = st.expander(label=("For a detailed schedule click here"))
         expander.table((df_omloop[df_omloop['omloop nummer'] == index_selected_bus]).drop(columns=['begintijd', 'lengte']))
 
 
@@ -345,6 +352,6 @@ else:
         st.session_state['page'] = selected_page
         st.experimental_rerun()
     elif selected_page == "Bus Specific Schedule":
-        Bus_Specific_Scedule()
+        Bus_Specific_Schedule()
     elif selected_page == 'Gantt Chart':
         Gantt_Chartbestand()

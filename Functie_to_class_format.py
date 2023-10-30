@@ -116,7 +116,7 @@ def make_plot(bus: object, kleurenblind: bool = False):
     ax.tick_params(axis='y', colors='white')
 
     # Create a legend and make its background transparent
-    legend = ax.legend([line1, line2], ['Battery in kW-h', 'Minimal battery value'], frameon=False)
+    legend = ax.legend([line1, line2], ['Battery in kW-h', f'Minimal battery value: {bus.batterijstart[1]} kW-h'], frameon=False)
     for text in legend.get_texts():
         text.set_color('white')
 
