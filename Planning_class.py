@@ -35,7 +35,13 @@ class lege_bus:
         self.buslijn.append(buslijn)
     
 
-    def controleer_verbruik(self, verbruik1, verbruik2, verbruik3):
+    def controleer_verbruik(self, verbruik1, verbruik2, verbruik3=0.0):
+        totaal_verbruik = verbruik1 + verbruik2 + verbruik3
+        if (self.batterij_huidig - totaal_verbruik) >= self.batterijmin:
+            return True
+        else:
+            return False
+
         
 
         
