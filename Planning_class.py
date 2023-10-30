@@ -1,3 +1,7 @@
+from Planning_functies import bepaal_energieverbruik
+import pandas as pd
+df = pd.read_excel('Connexxion data - 2023-2024.xlsx')
+
 class lege_bus:
     def __init__(self, batterij:float, omloopnummer:int):
         self.starttijden = []
@@ -19,7 +23,12 @@ class lege_bus:
             'snaaien gvd, verdomme milou'
         return
     
-    def controleer_verbruik(self):
-        print('Help Paul gaat slaan')
+
+    def controleer_verbruik(self, verbruik1, verbruik2, verbruik3):
+        
+
+        
+    
+
         
         
