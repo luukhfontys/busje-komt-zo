@@ -15,6 +15,8 @@ class lege_bus:
         check = self.controleer_verbruik()
         if not check:
             return False
+        else:
+            'snaaien gvd'
         return
     
     def controleer_verbruik(self):
