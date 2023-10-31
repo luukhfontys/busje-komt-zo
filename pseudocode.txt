@@ -1,0 +1,18 @@
+Stap 1:
+neem de eerste volgende rit uit de dienstregeling
+
+stap 2:
+bereken eindtijd van de rit
+
+stap 3:
+bereken verbruik van de rit
+
+stap 4:
+rit toekennen aan bestaande bus, voorwaarde:
+    - bus beschikbaar
+    - genoeg energie voor rit
+wanneer niet aan voorwaarde voldaan:
+nieuwe bus
+
+stap 5:
+terug naar stap 1 tot er geen volgende rit in de dienstregeling staat
