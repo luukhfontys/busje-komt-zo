@@ -22,7 +22,7 @@ class lege_bus:
         if not check:
             return False
         if self.locatie_huidig != start_locatie:
-            self.update_waardes(starttijd=starttijd, eindtijd=eindtijd,
+            self.update_waardes(starttijd=orgineletijd, eindtijd=starttijd,
                             start_locatie=self.locatie_huidig, eind_locatie=start_locatie,
                             verbruik=verbruik3, activiteit='Materiaal rit') #### start tijd aanpassen!!!!
             
