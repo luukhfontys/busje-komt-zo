@@ -39,6 +39,8 @@ class scheduled_bus():
             else:
                 self.material_info[First_location] = (Final_location, Battery, Time)
     def add_drive(self, Time, First_location, Final_location, Busline):
+        '''
+        '''
         
         if not self.check_battery():
             return False
