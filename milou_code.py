@@ -1,4 +1,5 @@
 import pandas as pd
+from Klas_deel_twee import scheduled_bus
 
 dienstregeling = pd.read_excel('Connexxion data - 2023-2024.xlsx', sheet_name = 'Dienstregeling')
 afstand = pd.read_excel('Connexxion data - 2023-2024.xlsx', sheet_name = 'Afstand matrix')
@@ -43,6 +44,27 @@ for index, row in afstand.iterrows():
     verbruik_afstand.append(afstand_kilometer * 1.6)
 
 afstand['verbruik'] = verbruik_afstand
-
+bussen = []
+for row in dienstregeling.index:
+    solved = False
+    start_locatie = dienstregeling.loc[row, 'startlocatie']
+    vertrektijd = dienstregeling.loc[row, 'huidige tijd']
+    buslijn = dienstregeling.loc[row, 'buslijn']
+    eind_locatie = dienstregeling.loc[row, 'eindlocatie']
+    #while not solved:
+    for bus in bussen:    
+        solved = bus.add_drive(Time=vertrektijd, First_location=start_locatie, Final_location= eind_locatie, Busline= buslijn)
+        if solved:
+            break
+    if not solved:
+        nieuwe_bus = scheduled_bus(afstand, 270.0)
+        bussen.append(nieuwe_bus)
+        solved = nieuwe_bus.add_drive(Time=vertrektijd, First_location=start_locatie, Final_location= eind_locatie, Busline= buslijn)
 print(afstand)
-    
+print(bussen[3].schedule)
+print(len(bussen))
+
+for bus in bussen:
+    rooster = bus.schedule
+    starttijden = rooster.keys()
+    rooster.values()

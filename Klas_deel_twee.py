@@ -1,5 +1,6 @@
+import pandas as pd
 class scheduled_bus():
-    def __init__(self, matrix, startbattery):
+    def __init__(self, matrix:pd.DataFrame, startbattery:float):
         '''Inladen van de data
         Afstands matrix, vanaf hier naar gerefereerd als matrix:
         afstanden en tijden van een rit worden in geladen
@@ -16,7 +17,7 @@ class scheduled_bus():
         self.material_info = {}
         self.charge_info = {}
         self.schedule_info_400 = {}
-        self.scheulde_info_401 = {}
+        self.schedule_info_401 = {}
         self.schedule = {}
         self.battery = startbattery
         self.batterymin = 0.1 * self.battery
@@ -42,15 +43,22 @@ class scheduled_bus():
         '''
         '''
         
-        if not self.check_battery():
+        
+        if not self.check_time(First_location=First_location, Busline=Busline, start_time=Time):
             return False
-        elif not self.check_time():
+        
+        elif not self.check_battery(First_location=First_location, Busline= Busline):
+            print(self.battery)
+            self.schedule[str(self.current_time)] = (self.current_location, 'ehvgar', 0.0)
+            self.current_time += self.charge_info[First_location][2] + 30
+            self.current_location = 'ehvgar'
+            self.battery += 225
             return False
         else:
             self.schedule[str(Time)] = (First_location, Final_location, Busline)
             self.current_location = Final_location
             return True
-    def Check_battery(self, First_location, Busline):
+    def check_battery(self, First_location, Busline):
         if Busline == 400.0:
             schedule_battery_cost = self.schedule_info_400[First_location][1]
         else:
