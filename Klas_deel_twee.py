@@ -40,10 +40,11 @@ class scheduled_bus():
             else:
                 self.material_info[First_location] = (Final_location, Battery, Time)
     def add_drive(self, Time, First_location, Final_location, Busline):
+        ''' Controleert of de bus de aangegeven rit kan rijden
+        checkt eerst de tijd met check time
+        checkt dan de batterij met check battery, ingeval deze faalt sturen we de bus naar het laadstation
+        anders voegen we de rit en eventuele materiaal ritten toe
         '''
-        '''
-        
-        
         if not self.check_time(First_location=First_location, Busline=Busline, start_time=Time):
             return False
         
@@ -55,10 +56,15 @@ class scheduled_bus():
             self.battery += 225
             return False
         else:
+            if self.current_location != First_location:
+                self.schedule[str(Time - self.material_info[First_location][2])] = (self.current_location, First_location, 1.0)
             self.schedule[str(Time)] = (First_location, Final_location, Busline)
             self.current_location = Final_location
             return True
     def check_battery(self, First_location, Busline):
+        ''' controleert of de bus genoeg batterij vermogen over heeft om de gegeven rit te rijden
+        controleert de lijn van de bus en of er een materiaal rit gereden moet worden, controleert ook of de bus daarna nog op kan laden
+        '''
         if Busline == 400.0:
             schedule_battery_cost = self.schedule_info_400[First_location][1]
         else:
@@ -76,6 +82,9 @@ class scheduled_bus():
             self.battery -= (material_battery_cost + schedule_battery_cost)
             return True
     def check_time(self, First_location, Busline, start_time):
+        ''' Controleert of de bus genoeg tijd heeft om de aangegeven rit te rijden
+        controleert ook voor eventuele materiaal ritten
+        '''
         if Busline == 400.0:
             schedule_time_cost = self.schedule_info_400[First_location][2]
         else:
