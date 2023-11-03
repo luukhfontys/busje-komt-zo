@@ -33,7 +33,16 @@ for index, row in dienstregeling.iterrows():
         if startlocatie == startlocatie2 and eindlocatie == eindlocatie2 and lijn == lijn2:
             afstand_kilometer = afstand_meter / 1000
             verbruik.append(afstand_kilometer * 1.6)
-            
+
 dienstregeling['verbruik'] = verbruik
 
-print(dienstregeling)
+verbruik_afstand = []
+for index, row in afstand.iterrows():
+    afstand_meter = row['afstand in meters']
+    afstand_kilometer = afstand_meter / 1000
+    verbruik_afstand.append(afstand_kilometer * 1.6)
+
+afstand['verbruik'] = verbruik_afstand
+
+print(afstand)
+    
