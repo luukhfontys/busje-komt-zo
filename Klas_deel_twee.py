@@ -1,6 +1,6 @@
 import pandas as pd
 class scheduled_bus():
-    def __init__(self, matrix:pd.DataFrame, startbattery:float):
+    def __init__(self, matrix:pd.DataFrame, startbattery:float, omloop:int):
         '''Inladen van de data
         Afstands matrix, vanaf hier naar gerefereerd als matrix:
         afstanden en tijden van een rit worden in geladen
@@ -23,6 +23,7 @@ class scheduled_bus():
         self.batterymin = 0.1 * self.battery
         self.current_location = 'ehvgar'
         self.current_time = 0
+        self.omloop = omloop
         for line in matrix.index:
             First_location = matrix.loc[line, 'startlocatie']
             Final_location = matrix.loc[line, 'eindlocatie']

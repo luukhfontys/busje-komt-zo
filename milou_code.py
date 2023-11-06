@@ -45,6 +45,7 @@ for index, row in afstand.iterrows():
 
 afstand['verbruik'] = verbruik_afstand
 bussen = []
+iteration = 0
 for row in dienstregeling.index:
     solved = False
     start_locatie = dienstregeling.loc[row, 'startlocatie']
@@ -57,7 +58,8 @@ for row in dienstregeling.index:
         if solved:
             break
     if not solved:
-        nieuwe_bus = scheduled_bus(afstand, 270.0)
+        iteration += 1
+        nieuwe_bus = scheduled_bus(afstand, 270.0, omloop=iteration)
         bussen.append(nieuwe_bus)
         solved = nieuwe_bus.add_drive(Time=vertrektijd, First_location=start_locatie, Final_location= eind_locatie, Busline= buslijn)
 print(afstand)
@@ -72,6 +74,7 @@ buslijnen = []
 begintijden = []
 for bus in bussen:
     rooster = bus.schedule
+<<<<<<< HEAD
     for key, value in rooster.items():
         index_lijst.append(index)
         index += 1
@@ -109,3 +112,5 @@ nieuwe_planning['eindlocatie'] = eindlocatie_lijst
 nieuwe_planning['starttijd'] = starttijden
 
 
+=======
+>>>>>>> 4b696225f10567b19eeda74b0648b2450f027480
