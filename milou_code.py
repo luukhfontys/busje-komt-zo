@@ -66,8 +66,11 @@ print(afstand)
 print(bussen[3].schedule)
 print(len(bussen))
 
+index = 0
+index_lijst = []
+startlocatie_lijst = []
+eindlocatie_lijst = []
+buslijnen = []
+begintijden = []
 for bus in bussen:
     rooster = bus.schedule
-    starttijden = rooster.keys()
-    rooster.values()
-    print(bus.omloop)
