@@ -74,7 +74,6 @@ buslijnen = []
 begintijden = []
 for bus in bussen:
     rooster = bus.schedule
-<<<<<<< HEAD
     for key, value in rooster.items():
         index_lijst.append(index)
         index += 1
@@ -112,5 +111,3 @@ nieuwe_planning['eindlocatie'] = eindlocatie_lijst
 nieuwe_planning['starttijd'] = starttijden
 
 
-=======
->>>>>>> 4b696225f10567b19eeda74b0648b2450f027480
