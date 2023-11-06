@@ -1,5 +1,6 @@
 import pandas as pd
 from Klas_deel_twee import scheduled_bus
+import numpy as np
 
 dienstregeling = pd.read_excel('Connexxion data - 2023-2024.xlsx', sheet_name = 'Dienstregeling')
 afstand = pd.read_excel('Connexxion data - 2023-2024.xlsx', sheet_name = 'Afstand matrix')
@@ -76,7 +77,6 @@ omlopen = []
 
 for bus in bussen:
     rooster = bus.schedule
-    omlopen.append(bus.omloop)
     for key, value in rooster.items():
         omlopen.append(bus.omloop)
         index_lijst.append(index)
@@ -110,11 +110,11 @@ for i in buslijnen:
         buslijn.append(i)
         activiteiten.append('dienst rit')
     elif i == 1.0:
-        buslijn.append('')
+        buslijn.append(np.nan)
         activiteiten.append('materiaal rit')
     else:
         activiteiten.append('idle')
-        buslijn.append('')
+        buslijn.append(np.nan)
 
 datum_vandaag = '06-11-2023'
 datum_morgen = '07-11-2023'
@@ -150,4 +150,20 @@ for i in begintijden:
         datums.append(dag_vandaag)
 
 nieuwe_planning['starttijd datum'] = datums
+nieuwe_planning['omloop nummer'] = omlopen
 
+count = 0
+for index, row in nieuwe_planning.iterrows():
+    sl1 = row['startlocatie']
+    el1 = row['eindlocatie']
+    l1 = row['buslijn']
+    if sl1 == el1:
+        count += 1
+    for index, row in afstand.iterrows():
+        sl2 = row['startlocatie']
+        el2 = row['eindlocatie']
+        l2 = row['buslijn']
+        if sl1 == sl2 and el1 == el2 and l1 == l2:
+            count+=1
+            
+print(count)
