@@ -72,15 +72,20 @@ startlocatie_lijst = []
 eindlocatie_lijst = []
 buslijnen = []
 begintijden = []
+omlopen = []
+
 for bus in bussen:
     rooster = bus.schedule
+    omlopen.append(bus.omloop)
     for key, value in rooster.items():
+        omlopen.append(bus.omloop)
         index_lijst.append(index)
         index += 1
         startlocatie_lijst.append(value[0])
         eindlocatie_lijst.append(value[1])
         buslijnen.append(value[2])
         begintijden.append(key)
+
 
 starttijden = []
 
@@ -98,16 +103,51 @@ for i in begintijden:
     starttijd = f'{uren}:{minuten}:00'
     starttijden.append(starttijd)
 
-bus_new = []
+activiteiten = []
+buslijn = []
 for i in buslijnen:
-    if i == 1.0:
-        i = ''
-    bus_new.append(i)
-    
+    if i == 400 or i == 401:
+        buslijn.append(i)
+        activiteiten.append('dienst rit')
+    elif i == 1.0:
+        buslijn.append('')
+        activiteiten.append('materiaal rit')
+    else:
+        activiteiten.append('idle')
+        buslijn.append('')
+
+datum_vandaag = '06-11-2023'
+datum_morgen = '07-11-2023'
 
 nieuwe_planning = pd.DataFrame()
 nieuwe_planning['startlocatie'] = startlocatie_lijst
 nieuwe_planning['eindlocatie'] = eindlocatie_lijst
 nieuwe_planning['starttijd'] = starttijden
+nieuwe_planning['activiteit'] = activiteiten
+nieuwe_planning['buslijn'] = buslijn
 
+datums = []
+
+for i in begintijden:
+    minuten = int(i) % 60
+    minuten = int(minuten)
+    uren = (int(i)- minuten)/60
+    uren = int(uren)
+    if uren >= 24:
+        uren = uren - 24
+        if uren < 10:
+            uren= f'0{uren}'
+        if minuten < 10:
+            minuten = f'0{minuten}'
+        dag_morgen = f'{datum_morgen} {uren}:{minuten}:00'
+        datums.append(dag_morgen)
+    else:
+        if uren < 10:
+            uren= f'0{uren}'
+        if minuten < 10:
+            minuten = f'0{minuten}'
+        dag_vandaag = f'{datum_vandaag} {uren}:{minuten}:00'
+        datums.append(dag_vandaag)
+
+nieuwe_planning['starttijd datum'] = datums
 
