@@ -64,7 +64,45 @@ print(afstand)
 print(bussen[3].schedule)
 print(len(bussen))
 
+index = 0
+index_lijst = []
+startlocatie_lijst = []
+eindlocatie_lijst = []
+buslijnen = []
+begintijden = []
 for bus in bussen:
     rooster = bus.schedule
-    starttijden = rooster.keys()
-    rooster.values()
+    for key, value in rooster.items():
+        index_lijst.append(index)
+        index += 1
+        startlocatie_lijst.append(value[0])
+        eindlocatie_lijst.append(value[1])
+        buslijnen.append(value[2])
+        begintijden.append(key)
+
+starttijden = []
+
+for i in begintijden:
+    minuten = int(i) % 60
+    minuten = int(minuten)
+    uren = (int(i)- minuten)/60
+    uren = int(uren)
+    if uren > 24:
+        uren = uren - 24
+    if uren < 10:
+        uren = f'0{uren}'
+    if minuten < 10:
+        minuten = f'0{minuten}'
+    starttijd = f'{uren}:{minuten}:00'
+    starttijden.append(starttijd)
+
+for i in buslijnen:
+    if i == 1.0:
+        print(i)
+
+nieuwe_planning = pd.DataFrame()
+nieuwe_planning['startlocatie'] = startlocatie_lijst
+nieuwe_planning['eindlocatie'] = eindlocatie_lijst
+nieuwe_planning['starttijd'] = starttijden
+
+
