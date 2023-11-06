@@ -1,0 +1,48 @@
+stap 1:
+bekijk het type rit
+
+stap 2:
+als de rit een idle rit is: 
+activeit = 'idle'
+verbruik = 0.01
+
+als de rit een dienstrit is ga naar stap 3
+
+als de rit oplaad rit is ga naar stap 4
+
+als de rit een materiaal rit is ga naar stap 5
+
+stap 3:
+de rit is een dienstrit
+controleer of welke buslijn de dienstrit rijd
+stap 3.1
+controleer de start locatie van de dienstrit
+deze dicteert het verbruik
+
+gebruik een boolean mask om de juiste ritten in de afstandsmatrix over te houden, 
+
+ga door naar stap 6
+
+
+stap 4:
+de rit is een oplaad rit
+controleer de start locatie van de rit
+filter nu op alle ritten met eindlocatie ehvgar, en de beginlocatie van de rit
+gebruik hiervoor een boolean mask, 
+
+ga door naar stap 6
+
+stap 5:
+de rit is een materiaal rit
+controleer de start locatie van de rit,
+controleer de eindlocatie van de rit,
+gebruik hiervoor een boolean mask,
+! opletten ! hier kunnen 2 ritten overblijven, de dienstrit en de non dienstrit
+kies daarom altijd de laatste index doormiddel van .loc[n] met n = max(df.index) waarin df het gemaskte df is
+ga hierna naar stap 6
+
+
+stap 6:
+nu heb je nog een optie over dit is de rij met je gegevens
+haal hier de afstand uit en vermenig vuldig deze met het verbruik
+en haal hier de maximale tijd uit en tel deze bij de start tijd op voor de eindtijd
