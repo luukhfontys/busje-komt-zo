@@ -96,9 +96,12 @@ for i in begintijden:
     starttijd = f'{uren}:{minuten}:00'
     starttijden.append(starttijd)
 
+bus_new = []
 for i in buslijnen:
     if i == 1.0:
-        print(i)
+        i = ''
+    bus_new.append(i)
+    
 
 nieuwe_planning = pd.DataFrame()
 nieuwe_planning['startlocatie'] = startlocatie_lijst
