@@ -60,6 +60,8 @@ class scheduled_bus():
                 self.schedule[str(Time - self.material_info[First_location][2])] = (self.current_location, First_location, 1.0)
             self.schedule[str(Time)] = (First_location, Final_location, Busline)
             self.current_location = Final_location
+            self.schedule[str(self.current_time)] = (Final_location, Final_location, 2.0)
+            self.current_time += 1
             return True
     def check_battery(self, First_location, Busline):
         ''' controleert of de bus genoeg batterij vermogen over heeft om de gegeven rit te rijden
