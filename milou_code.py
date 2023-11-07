@@ -63,9 +63,9 @@ for row in dienstregeling.index:
         nieuwe_bus = scheduled_bus(afstand, 270.0, omloop=iteration)
         bussen.append(nieuwe_bus)
         solved = nieuwe_bus.add_drive(Time=vertrektijd, First_location=start_locatie, Final_location= eind_locatie, Busline= buslijn)
-print(afstand)
-print(bussen[3].schedule)
-print(len(bussen))
+#print(afstand)
+#print(bussen[3].schedule)
+#print(len(bussen))
 
 index = 0
 index_lijst = []
@@ -112,6 +112,9 @@ for i in buslijnen:
     elif i == 1.0:
         buslijn.append(np.nan)
         activiteiten.append('materiaal rit')
+    elif i == 0.0:
+        buslijn.append(np.nan)
+        activiteiten.append('Opladen')
     else:
         activiteiten.append('idle')
         buslijn.append(np.nan)
@@ -152,22 +155,40 @@ for i in begintijden:
 nieuwe_planning['starttijd datum'] = datums
 nieuwe_planning['omloop nummer'] = omlopen
 
+print(nieuwe_planning)
+verbruik = []
 
 for index, row in nieuwe_planning.iterrows():
     #stap 2
     rit = row['activiteit']
     if rit == 'idle':
-        verbruik = 0.01
+        verbruik.append(0.01)
     #stap 3
     elif rit == 'dienst rit':
-        bus_nummer = row['buslijn']
+        correcte_buslijn = afstand[afstand['buslijn'] == row['buslijn']]
+        correcte_rit = correcte_buslijn[correcte_buslijn['startlocatie'] == row['startlocatie']]
+        verbruik.append(correcte_rit['afstand in meters']/1000 * 1.6)
+    elif rit == 'materiaal rit':
         start_locatie = row['startlocatie']
-        for line in afstand.index:
-            first_location = afstand.loc[line, 'startlocatie']
-            final_location = afstand.loc[line, 'eindlocatie']
-            busline = afstand.loc[line, 'buslijn']
-            batterij = afstand.loc[line, 'verbruik']
-            time = afstand.loc[line, 'max reistijd in min']
+        eind_locatie = row['eindlocatie']
+        
+        correct_eind = afstand[afstand['eindlocatie'] == eind_locatie]
+        correcte_rit = correct_eind[correct_eind['startlocatie'] == start_locatie]
+        if start_locatie == 'ehvgar' or eind_locatie == 'ehvgar':
+            verbruik.append(correcte_rit['afstand in meters']/1000 * 1.6)
+        else:
+            afstand_colomn = correcte_rit['afstand in meters']
+            laatste_waarde = afstand_colomn.iloc[-1]
+            verbruik.append(laatste_waarde/1000 * 1.6)
+    elif rit == 'opladen':
+        verbruik.append(225.0)
+        
+        # for line in afstand.index:
+        #     first_location = afstand.loc[line, 'startlocatie']
+        #     final_location = afstand.loc[line, 'eindlocatie']
+        #     busline = afstand.loc[line, 'buslijn']
+        #     batterij = afstand.loc[line, 'verbruik']
+        #     time = afstand.loc[line, 'max reistijd in min']
             
 
             

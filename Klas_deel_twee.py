@@ -50,7 +50,6 @@ class scheduled_bus():
             return False
         
         elif not self.check_battery(First_location=First_location, Busline= Busline):
-            print(self.battery)
             self.schedule[str(self.current_time)] = (self.current_location, 'ehvgar', 0.0)
             self.current_time += self.charge_info[First_location][2] + 30
             self.current_location = 'ehvgar'
