@@ -180,8 +180,11 @@ for index, row in nieuwe_planning.iterrows():
             afstand_colomn = correcte_rit['afstand in meters']
             laatste_waarde = afstand_colomn.iloc[-1]
             verbruik.append(laatste_waarde/1000 * 1.6)
-    elif rit == 'opladen':
+    elif rit == 'Opladen':
         verbruik.append(225.0)
+    else:
+        print(rit)
+        print('foutcode')
         
         # for line in afstand.index:
         #     first_location = afstand.loc[line, 'startlocatie']
