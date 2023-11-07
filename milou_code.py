@@ -272,4 +272,9 @@ nieuwe_planning['energie verbruik'] = verbruik
 nieuwe_planning['starttijd datum'] = datums
 nieuwe_planning['eindtijd datum'] = datums_eind
 nieuwe_planning['omloop nummer'] = omlopen
-print(nieuwe_planning)
+
+cols = nieuwe_planning.columns.tolist()
+cols = ['startlocatie', 'eindlocatie', 'starttijd', 'eindtijd', 'activiteit', 'buslijn', 'energie verbruik', 'starttijd datum', 'eindtijd datum', 'omloop nummer']
+df = nieuwe_planning[cols]
+
+df.to_excel('NieuwePlanning.xlsx')
