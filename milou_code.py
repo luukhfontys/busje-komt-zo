@@ -122,12 +122,6 @@ for i in buslijnen:
 datum_vandaag = '06-11-2023'
 datum_morgen = '07-11-2023'
 
-nieuwe_planning = pd.DataFrame()
-nieuwe_planning['startlocatie'] = startlocatie_lijst
-nieuwe_planning['eindlocatie'] = eindlocatie_lijst
-nieuwe_planning['starttijd'] = starttijden
-nieuwe_planning['activiteit'] = activiteiten
-nieuwe_planning['buslijn'] = buslijn
 
 datums = []
 
@@ -152,10 +146,13 @@ for i in begintijden:
         dag_vandaag = f'{datum_vandaag} {uren}:{minuten}:00'
         datums.append(dag_vandaag)
 
-nieuwe_planning['starttijd datum'] = datums
-nieuwe_planning['omloop nummer'] = omlopen
+nieuwe_planning = pd.DataFrame()
+nieuwe_planning['startlocatie'] = startlocatie_lijst
+nieuwe_planning['eindlocatie'] = eindlocatie_lijst
+nieuwe_planning['starttijd'] = starttijden
+nieuwe_planning['activiteit'] = activiteiten
+nieuwe_planning['buslijn'] = buslijn
 
-print(nieuwe_planning)
 verbruik = []
 
 for index, row in nieuwe_planning.iterrows():
@@ -195,4 +192,84 @@ print(verbruik)
         #     time = afstand.loc[line, 'max reistijd in min']
             
 
-            
+duur = []
+
+for index, row in nieuwe_planning.iterrows():
+    #stap 2
+    rit = row['activiteit']
+    if rit == 'idle':
+        duur.append(1)  
+    #stap 3
+    elif rit == 'dienst rit':
+        correcte_buslijn = afstand[afstand['buslijn'] == row['buslijn']]
+        correcte_rit = correcte_buslijn[correcte_buslijn['startlocatie'] == row['startlocatie']]
+        duur.append(int(correcte_rit['max reistijd in min']))
+    elif rit == 'materiaal rit':
+        start_locatie = row['startlocatie']
+        eind_locatie = row['eindlocatie']
+        
+        correct_eind = afstand[afstand['eindlocatie'] == eind_locatie]
+        correcte_rit = correct_eind[correct_eind['startlocatie'] == start_locatie]
+        if start_locatie == 'ehvgar' or eind_locatie == 'ehvgar':
+            duur.append(int(correcte_rit['max reistijd in min']))
+        else:
+            afstand_colomn = correcte_rit['max reistijd in min']
+            laatste_waarde = afstand_colomn.iloc[-1]
+            duur.append(int(laatste_waarde))
+    elif rit == 'Opladen':
+        duur.append(30)
+    else:
+        print(rit)
+        print('foutcode')
+
+
+begintijden = [int(x) for x in begintijden]
+np_begintijden = np.array(begintijden)
+np_duur = np.array(duur)
+tijd_eind = np_begintijden + np_duur
+
+eindtijden = []
+
+for i in tijd_eind:
+    minuten = int(i) % 60
+    minuten = int(minuten)
+    uren = (int(i)- minuten)/60
+    uren = int(uren)
+    if uren > 24:
+        uren = uren - 24
+    if uren < 10:
+        uren = f'0{uren}'
+    if minuten < 10:
+        minuten = f'0{minuten}'
+    eindtijd = f'{uren}:{minuten}:00'
+    eindtijden.append(eindtijd)
+
+datums_eind = []
+for i in tijd_eind:
+    minuten = int(i) % 60
+    minuten = int(minuten)
+    uren = (int(i)- minuten)/60
+    uren = int(uren)
+    if uren >= 24:
+        uren = uren - 24
+        if uren < 10:
+            uren= f'0{uren}'
+        if minuten < 10:
+            minuten = f'0{minuten}'
+        dag_morgen = f'{datum_morgen} {uren}:{minuten}:00'
+        datums_eind.append(dag_morgen)
+    else:
+        if uren < 10:
+            uren= f'0{uren}'
+        if minuten < 10:
+            minuten = f'0{minuten}'
+        dag_vandaag = f'{datum_vandaag} {uren}:{minuten}:00'
+        datums_eind.append(dag_vandaag)
+
+
+nieuwe_planning['eindtijd'] = eindtijden
+nieuwe_planning['energie verbruik'] = verbruik
+nieuwe_planning['starttijd datum'] = datums
+nieuwe_planning['eindtijd datum'] = datums_eind
+nieuwe_planning['omloop nummer'] = omlopen
+print(nieuwe_planning)
