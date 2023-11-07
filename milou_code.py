@@ -167,7 +167,7 @@ for index, row in nieuwe_planning.iterrows():
     elif rit == 'dienst rit':
         correcte_buslijn = afstand[afstand['buslijn'] == row['buslijn']]
         correcte_rit = correcte_buslijn[correcte_buslijn['startlocatie'] == row['startlocatie']]
-        verbruik.append(correcte_rit['afstand in meters']/1000 * 1.6)
+        verbruik.append(int(correcte_rit['afstand in meters'])/1000 * 1.6)
     elif rit == 'materiaal rit':
         start_locatie = row['startlocatie']
         eind_locatie = row['eindlocatie']
@@ -175,17 +175,18 @@ for index, row in nieuwe_planning.iterrows():
         correct_eind = afstand[afstand['eindlocatie'] == eind_locatie]
         correcte_rit = correct_eind[correct_eind['startlocatie'] == start_locatie]
         if start_locatie == 'ehvgar' or eind_locatie == 'ehvgar':
-            verbruik.append(correcte_rit['afstand in meters']/1000 * 1.6)
+            verbruik.append(int(correcte_rit['afstand in meters'])/1000 * 1.6)
         else:
             afstand_colomn = correcte_rit['afstand in meters']
             laatste_waarde = afstand_colomn.iloc[-1]
-            verbruik.append(laatste_waarde/1000 * 1.6)
+            print(int(laatste_waarde)/1000 * 1.6)
+            verbruik.append(int(laatste_waarde)/1000 * 1.6)
     elif rit == 'Opladen':
         verbruik.append(225.0)
     else:
         print(rit)
         print('foutcode')
-        
+print(verbruik)
         # for line in afstand.index:
         #     first_location = afstand.loc[line, 'startlocatie']
         #     final_location = afstand.loc[line, 'eindlocatie']
