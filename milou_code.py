@@ -152,18 +152,22 @@ for i in begintijden:
 nieuwe_planning['starttijd datum'] = datums
 nieuwe_planning['omloop nummer'] = omlopen
 
-count = 0
+
 for index, row in nieuwe_planning.iterrows():
-    sl1 = row['startlocatie']
-    el1 = row['eindlocatie']
-    l1 = row['buslijn']
-    if sl1 == el1:
-        count += 1
-    for index, row in afstand.iterrows():
-        sl2 = row['startlocatie']
-        el2 = row['eindlocatie']
-        l2 = row['buslijn']
-        if sl1 == sl2 and el1 == el2 and l1 == l2:
-            count+=1
+    #stap 2
+    rit = row['activiteit']
+    if rit == 'idle':
+        verbruik = 0.01
+    #stap 3
+    elif rit == 'dienst rit':
+        bus_nummer = row['buslijn']
+        start_locatie = row['startlocatie']
+        for line in afstand.index:
+            first_location = afstand.loc[line, 'startlocatie']
+            final_location = afstand.loc[line, 'eindlocatie']
+            busline = afstand.loc[line, 'buslijn']
+            batterij = afstand.loc[line, 'verbruik']
+            time = afstand.loc[line, 'max reistijd in min']
             
-print(count)
+
+            
