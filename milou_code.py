@@ -176,14 +176,13 @@ for index, row in nieuwe_planning.iterrows():
         else:
             afstand_colomn = correcte_rit['afstand in meters']
             laatste_waarde = afstand_colomn.iloc[-1]
-            print(int(laatste_waarde)/1000 * 1.6)
             verbruik.append(int(laatste_waarde)/1000 * 1.6)
     elif rit == 'Opladen':
         verbruik.append(225.0)
     else:
         print(rit)
         print('foutcode')
-print(verbruik)
+
         # for line in afstand.index:
         #     first_location = afstand.loc[line, 'startlocatie']
         #     final_location = afstand.loc[line, 'eindlocatie']
@@ -266,15 +265,19 @@ for i in tijd_eind:
         dag_vandaag = f'{datum_vandaag} {uren}:{minuten}:00'
         datums_eind.append(dag_vandaag)
 
-
+print(datums_eind)
 nieuwe_planning['eindtijd'] = eindtijden
-nieuwe_planning['energie verbruik'] = verbruik
+nieuwe_planning['energieverbruik'] = verbruik
 nieuwe_planning['starttijd datum'] = datums
 nieuwe_planning['eindtijd datum'] = datums_eind
 nieuwe_planning['omloop nummer'] = omlopen
 
 cols = nieuwe_planning.columns.tolist()
-cols = ['startlocatie', 'eindlocatie', 'starttijd', 'eindtijd', 'activiteit', 'buslijn', 'energie verbruik', 'starttijd datum', 'eindtijd datum', 'omloop nummer']
+cols = ['startlocatie', 'eindlocatie', 'starttijd', 'eindtijd', 'activiteit', 'buslijn', 'energieverbruik', 'starttijd datum', 'eindtijd datum', 'omloop nummer']
 df = nieuwe_planning[cols]
 
+df[['starttijd datum', 'eindtijd datum']] = df[['starttijd datum', 'eindtijd datum']].apply(pd.to_datetime)
+
 df.to_excel('NieuwePlanning.xlsx')
+
+print(df.dtypes)
