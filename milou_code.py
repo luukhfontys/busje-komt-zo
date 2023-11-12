@@ -4,6 +4,8 @@ import numpy as np
 from Functie_to_class_format import check_dienstregeling
 
 dienstregeling = pd.read_excel('Connexxion data - 2023-2024.xlsx', sheet_name = 'Dienstregeling')
+dienstregeling.sort_values(by=['vertrektijd'])
+print(dienstregeling)
 afstand = pd.read_excel('Connexxion data - 2023-2024.xlsx', sheet_name = 'Afstand matrix')
 
 tijden = []
@@ -58,7 +60,7 @@ for row in dienstregeling.index:
     ### updaten locaties
     for bus in bussen:
         bus.location_match(start_locatie)
-        print(bus.correct_location)
+        #print(bus.correct_location)
     bussen.sort()
     for bus in bussen:    
         solved = bus.add_drive(Time=vertrektijd, First_location=start_locatie, Final_location= eind_locatie, Busline= buslijn)
@@ -187,7 +189,7 @@ for index, row in nieuwe_planning.iterrows():
         verbruik.append(225.0)
     else:
         print(rit)
-        print('foutcode')
+        #print('foutcode')
 
         # for line in afstand.index:
         #     first_location = afstand.loc[line, 'startlocatie']
@@ -284,9 +286,9 @@ df = nieuwe_planning[cols]
 
 df[['starttijd datum', 'eindtijd datum']] = df[['starttijd datum', 'eindtijd datum']].apply(pd.to_datetime)
 
-print(check_dienstregeling(df_dienstregeling=dienstregeling, df_planning=df))
+#print(check_dienstregeling(df_dienstregeling=dienstregeling, df_planning=df))
 print(len(bussen))
 
-df.to_excel('NieuwePlanning.xlsx')
+#df.to_excel('NieuwePlanning.xlsx')
 
 
