@@ -57,6 +57,11 @@ class scheduled_bus():
             return False
         else:
             if self.current_location != First_location:
+                # try:
+                #     self.schedule[str(Time - self.material_info[First_location][2])]
+                #     return False
+                # except:
+                #     ''
                 self.schedule[str(Time - self.material_info[First_location][2])] = (self.current_location, First_location, 1.0)
             self.schedule[str(Time)] = (First_location, Final_location, Busline)
             self.current_location = Final_location
@@ -100,7 +105,8 @@ class scheduled_bus():
         if self.current_time + material_time_cost > start_time:
             return False
         else:
-            self.current_time += (material_time_cost + schedule_time_cost)
+            self.current_time = start_time + schedule_time_cost
+            #self.current_time += (material_time_cost + schedule_time_cost)
             return True
             
         

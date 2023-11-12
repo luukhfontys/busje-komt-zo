@@ -1,6 +1,7 @@
 import pandas as pd
 from Klas_deel_twee import scheduled_bus
 import numpy as np
+from Functie_to_class_format import check_dienstregeling
 
 dienstregeling = pd.read_excel('Connexxion data - 2023-2024.xlsx', sheet_name = 'Dienstregeling')
 afstand = pd.read_excel('Connexxion data - 2023-2024.xlsx', sheet_name = 'Afstand matrix')
@@ -53,9 +54,12 @@ for row in dienstregeling.index:
     vertrektijd = dienstregeling.loc[row, 'huidige tijd']
     buslijn = dienstregeling.loc[row, 'buslijn']
     eind_locatie = dienstregeling.loc[row, 'eindlocatie']
-    #while not solved:
+    if vertrektijd == 1441:
+        print(start_locatie, vertrektijd)
     for bus in bussen:    
         solved = bus.add_drive(Time=vertrektijd, First_location=start_locatie, Final_location= eind_locatie, Busline= buslijn)
+        if vertrektijd == 1441:
+            print(bus.omloop, bus.schedule)
         if solved:
             break
     if not solved:
@@ -265,7 +269,7 @@ for i in tijd_eind:
         dag_vandaag = f'{datum_vandaag} {uren}:{minuten}:00'
         datums_eind.append(dag_vandaag)
 
-print(datums_eind)
+#print(datums_eind)
 nieuwe_planning['eindtijd'] = eindtijden
 nieuwe_planning['energieverbruik'] = verbruik
 nieuwe_planning['starttijd datum'] = datums
@@ -278,6 +282,8 @@ df = nieuwe_planning[cols]
 
 df[['starttijd datum', 'eindtijd datum']] = df[['starttijd datum', 'eindtijd datum']].apply(pd.to_datetime)
 
+print(check_dienstregeling(df_dienstregeling=dienstregeling, df_planning=df))
+
 df.to_excel('NieuwePlanning.xlsx')
 
-print(df.dtypes)
+
