@@ -4,8 +4,6 @@ import numpy as np
 from Functie_to_class_format import check_dienstregeling
 
 dienstregeling = pd.read_excel('Connexxion data - 2023-2024.xlsx', sheet_name = 'Dienstregeling')
-dienstregeling.sort_values(by=['vertrektijd'])
-print(dienstregeling)
 afstand = pd.read_excel('Connexxion data - 2023-2024.xlsx', sheet_name = 'Afstand matrix')
 
 tijden = []
@@ -22,6 +20,7 @@ for index, row in dienstregeling.iterrows():
     tijden.append(huidige_tijd)
 
 dienstregeling['huidige tijd'] = tijden
+dienstregeling = dienstregeling.sort_values(by=['huidige tijd'])
 
 
 #Verbruik per kilometer ligt tussen de 0.7 en 2.5 kWh
@@ -154,6 +153,7 @@ for i in begintijden:
         dag_vandaag = f'{datum_vandaag} {uren}:{minuten}:00'
         datums.append(dag_vandaag)
 
+
 nieuwe_planning = pd.DataFrame()
 nieuwe_planning['startlocatie'] = startlocatie_lijst
 nieuwe_planning['eindlocatie'] = eindlocatie_lijst
@@ -227,7 +227,7 @@ for index, row in nieuwe_planning.iterrows():
         duur.append(30)
     else:
         print(rit)
-        print('foutcode')
+        #print('foutcode')
 
 
 begintijden = [int(x) for x in begintijden]
@@ -289,6 +289,6 @@ df[['starttijd datum', 'eindtijd datum']] = df[['starttijd datum', 'eindtijd dat
 #print(check_dienstregeling(df_dienstregeling=dienstregeling, df_planning=df))
 print(len(bussen))
 
-#df.to_excel('NieuwePlanning.xlsx')
+df.to_excel('NieuwePlanning2.xlsx')
 
 
