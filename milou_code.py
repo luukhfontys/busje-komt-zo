@@ -54,12 +54,8 @@ for row in dienstregeling.index:
     vertrektijd = dienstregeling.loc[row, 'huidige tijd']
     buslijn = dienstregeling.loc[row, 'buslijn']
     eind_locatie = dienstregeling.loc[row, 'eindlocatie']
-    if vertrektijd == 1441:
-        print(start_locatie, vertrektijd)
     for bus in bussen:    
         solved = bus.add_drive(Time=vertrektijd, First_location=start_locatie, Final_location= eind_locatie, Busline= buslijn)
-        if vertrektijd == 1441:
-            print(bus.omloop, bus.schedule)
         if solved:
             break
     if not solved:
@@ -98,7 +94,7 @@ for i in begintijden:
     minuten = int(minuten)
     uren = (int(i)- minuten)/60
     uren = int(uren)
-    if uren > 24:
+    if uren >= 24:
         uren = uren - 24
     if uren < 10:
         uren = f'0{uren}'
