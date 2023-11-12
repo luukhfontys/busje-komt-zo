@@ -3,7 +3,7 @@ from Klas_deel_twee import scheduled_bus
 import numpy as np
 from Functie_to_class_format import check_dienstregeling
 
-#import
+
 def importeren(bestandsnaam:str='Connexxion data - 2023-2024.xlsx', sheetnaam1:str='Dienstregeling', sheetnaam2:str='Afstand matrix'):
     ''' importeerd de relevante data uit excelsheets
     '''
@@ -126,8 +126,6 @@ def starttijden_goedzetten(begintijden, datum_morgen, datum_vandaag):
         starttijd = f'{uren}:{minuten}:00'
         starttijden.append(starttijd)
 
-
-
     datums = []
 
     for i in begintijden:
@@ -176,7 +174,7 @@ def activiteit_buslijn(buslijnen):
     return activiteiten
 
 def begin_planning(bussen, afstand, dienstregeling,datum_morgen, datum_vandaag):
-    '''Maakt het eerste deel van de nieuwe planning aan'''
+    '''Maakt de nieuwe planning aan'''
     startlocatie_lijst, eindlocatie_lijst, buslijn, begintijden, omlopen = oplossing_uitlezen(bussen)
     starttijden, datums = starttijden_goedzetten(begintijden, datum_morgen, datum_vandaag)
     activiteiten = activiteit_buslijn(buslijn)
