@@ -87,7 +87,7 @@ def create_planning(dienstregeling:pd.DataFrame, afstand:pd.DataFrame,batterijwa
 #print(bussen[3].schedule)
 #print(len(bussen))
 
-def oplossing_uitlezen():
+def oplossing_uitlezen(bussen):
     '''Zet de gemaakte oplossing om in lijsten voor het maken van een planning'''
     startlocatie_lijst = []
     eindlocatie_lijst = []
@@ -319,4 +319,9 @@ def planning_deel2(nieuwe_planning, eindtijden, verbruik, datums, datums_eind, o
     #df.to_excel('OmloopplanningIdleop2Min.xlsx')
 
 
+def uitvoeren():
+    tijden_minuten(dienstregeling)
+    create_planning(dienstregeling, afstand,270)
+    oplossing_uitlezen(bussen)
 
+uitvoeren()

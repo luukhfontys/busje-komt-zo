@@ -29,3 +29,28 @@ from Functie_to_class_format import *
 import plotly.express as px
 
 df_dienstregeling = pd.read_excel('NieuwePlanning.xlsx')
+
+#Verbruik per kilometer ligt tussen de 0.7 en 2.5 kWh
+verbruik = []
+for index, row in dienstregeling.iterrows():
+    startlocatie = row['startlocatie']
+    eindlocatie = row['eindlocatie']
+    lijn = row['buslijn']
+    for index, row in afstand.iterrows():
+        eindlocatie2 = row['eindlocatie']
+        startlocatie2 = row['startlocatie']
+        lijn2 = row['buslijn']
+        afstand_meter = row['afstand in meters']
+        if startlocatie == startlocatie2 and eindlocatie == eindlocatie2 and lijn == lijn2:
+            afstand_kilometer = afstand_meter / 1000
+            verbruik.append(afstand_kilometer * 1.6)
+
+dienstregeling['verbruik'] = verbruik
+
+verbruik_afstand = []
+for index, row in afstand.iterrows():
+    afstand_meter = row['afstand in meters']
+    afstand_kilometer = afstand_meter / 1000
+    verbruik_afstand.append(afstand_kilometer * 1.6)
+
+afstand['verbruik'] = verbruik_afstand
