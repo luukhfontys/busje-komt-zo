@@ -42,6 +42,8 @@ class scheduled_bus():
             else:
                 self.material_info[First_location] = (Final_location, Battery, Time)
     def __lt__(self, other):
+        ''' Sorteert een lijst met classes op basis van de hun locatie
+        '''
         return self.correct_location < other.correct_location
     def add_drive(self, Time, First_location, Final_location, Busline):
         ''' Controleert of de bus de aangegeven rit kan rijden
@@ -112,6 +114,8 @@ class scheduled_bus():
             #self.current_time += (material_time_cost + schedule_time_cost)
             return True
     def location_match(self, location):
+        ''' update de class of dat de in gegeven locatie dezelfde is als de locatie van de bus
+        '''
         if self.current_location == location:
             self.correct_location = 1
         else:
