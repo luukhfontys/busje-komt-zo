@@ -1,5 +1,5 @@
 import pandas as pd
-from Klas_deel_twee import scheduled_bus
+from planning_generaliseren import scheduled_bus
 import numpy as np
 from Functie_to_class_format import check_dienstregeling
 
