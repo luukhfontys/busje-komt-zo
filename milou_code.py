@@ -186,7 +186,8 @@ for index, row in nieuwe_planning.iterrows():
             laatste_waarde = afstand_colomn.iloc[-1]
             verbruik.append(int(laatste_waarde)/1000 * 1.6)
     elif rit == 'Opladen':
-        verbruik.append(225.0)
+        verbruik.append(-225.0/2)
+        print('elif bereikt')
     else:
         print(rit)
         #print('foutcode')
@@ -224,7 +225,7 @@ for index, row in nieuwe_planning.iterrows():
             laatste_waarde = afstand_colomn.iloc[-1]
             duur.append(int(laatste_waarde))
     elif rit == 'Opladen':
-        duur.append(30)
+        duur.append(15)
     else:
         print(rit)
         #print('foutcode')
