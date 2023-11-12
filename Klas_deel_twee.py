@@ -24,6 +24,7 @@ class scheduled_bus():
         self.current_location = 'ehvgar'
         self.current_time = 0
         self.omloop = omloop
+        self.correct_location = 0
         for line in matrix.index:
             First_location = matrix.loc[line, 'startlocatie']
             Final_location = matrix.loc[line, 'eindlocatie']
@@ -40,6 +41,8 @@ class scheduled_bus():
                 self.schedule_start[Final_location] = (First_location, Battery, Time) 
             else:
                 self.material_info[First_location] = (Final_location, Battery, Time)
+    def __lt__(self, other):
+        return self.correct_location < other.correct_location
     def add_drive(self, Time, First_location, Final_location, Busline):
         ''' Controleert of de bus de aangegeven rit kan rijden
         checkt eerst de tijd met check time
@@ -51,9 +54,9 @@ class scheduled_bus():
         
         elif not self.check_battery(First_location=First_location, Busline= Busline):
             self.schedule[str(self.current_time)] = (self.current_location, 'ehvgar', 0.0)
-            self.current_time += self.charge_info[First_location][2] + 30
+            self.current_time += self.charge_info[First_location][2] + 15
             self.current_location = 'ehvgar'
-            self.battery += 225
+            self.battery += 225/2
             return False
         else:
             if self.current_location != First_location:
@@ -108,6 +111,11 @@ class scheduled_bus():
             self.current_time = start_time + schedule_time_cost
             #self.current_time += (material_time_cost + schedule_time_cost)
             return True
+    def location_match(self, location):
+        if self.current_location == location:
+            self.correct_location = 1
+        else:
+            self.correct_location = 0
             
         
     

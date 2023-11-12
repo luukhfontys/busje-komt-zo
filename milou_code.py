@@ -49,11 +49,17 @@ afstand['verbruik'] = verbruik_afstand
 bussen = []
 iteration = 0
 for row in dienstregeling.index:
+    #print(len(bussen))
     solved = False
     start_locatie = dienstregeling.loc[row, 'startlocatie']
     vertrektijd = dienstregeling.loc[row, 'huidige tijd']
     buslijn = dienstregeling.loc[row, 'buslijn']
     eind_locatie = dienstregeling.loc[row, 'eindlocatie']
+    ### updaten locaties
+    for bus in bussen:
+        bus.location_match(start_locatie)
+        print(bus.correct_location)
+    bussen.sort()
     for bus in bussen:    
         solved = bus.add_drive(Time=vertrektijd, First_location=start_locatie, Final_location= eind_locatie, Busline= buslijn)
         if solved:
@@ -234,7 +240,7 @@ for i in tijd_eind:
     minuten = int(minuten)
     uren = (int(i)- minuten)/60
     uren = int(uren)
-    if uren > 24:
+    if uren >= 24:
         uren = uren - 24
     if uren < 10:
         uren = f'0{uren}'
@@ -279,6 +285,7 @@ df = nieuwe_planning[cols]
 df[['starttijd datum', 'eindtijd datum']] = df[['starttijd datum', 'eindtijd datum']].apply(pd.to_datetime)
 
 print(check_dienstregeling(df_dienstregeling=dienstregeling, df_planning=df))
+print(len(bussen))
 
 df.to_excel('NieuwePlanning.xlsx')
 
