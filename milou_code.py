@@ -127,7 +127,7 @@ for i in buslijnen:
         buslijn.append(np.nan)
 
 datum_vandaag = '06-11-2023'
-datum_morgen = '07-11-2023'
+datum_morgen = '06-12-2023'
 
 
 datums = []
@@ -290,6 +290,6 @@ df[['starttijd datum', 'eindtijd datum']] = df[['starttijd datum', 'eindtijd dat
 #print(check_dienstregeling(df_dienstregeling=dienstregeling, df_planning=df))
 print(len(bussen))
 
-df.to_excel('NieuwePlanning2.xlsx')
+df.to_excel('NieuwePlanning3.xlsx')
 
 
