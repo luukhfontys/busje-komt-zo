@@ -187,7 +187,6 @@ for index, row in nieuwe_planning.iterrows():
             verbruik.append(int(laatste_waarde)/1000 * 1.6)
     elif rit == 'Opladen':
         verbruik.append(-225.0/2)
-        print('elif bereikt')
     else:
         print(rit)
         #print('foutcode')
