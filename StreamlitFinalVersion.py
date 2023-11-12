@@ -93,11 +93,12 @@ def upload_validate_page():
                 df_afstandsmatrix = pd.read_excel(st_timetable, sheet_name='Afstand matrix')
                 format_check_afstandm = format_check_afstandmatrix(df_afstandsmatrix)
                 read_success_afstandsmatrix = True
+                
             except Exception as e:
                 print(e)
                 df_afstandsmatrix = None
                 read_success_afstandsmatrix = False
-            
+                
             if all(format_check_timetb[0:2]) and read_success_afstandsmatrix and all(format_check_afstandm[0:2]):
                 checkdr = check_dienstregeling(df_dienstregeling, df_omloop)
                 compleet = checkdr[0]
@@ -114,7 +115,7 @@ def upload_validate_page():
                                 st.session_state['format_check'] = format_check
                                 st.session_state['page'] = 'Overview'
                                 st.session_state['bussen'] = bussen
-                                st.experimental_rerun()
+                                st.rerun()
                     else:
                         df_energieverbruik_errors = df_omloop.style.apply(highlight_warning_rows, rows=energieverbruikrows, axis=1)
                         warning1 = st.warning("Timetable is correct, but abnormal energy usage by busses detected, see marked dataframe below: ")
@@ -126,7 +127,7 @@ def upload_validate_page():
                                 st.session_state['format_check'] = format_check
                                 st.session_state['page'] = 'Overview'
                                 st.session_state['bussen'] = bussen
-                                st.experimental_rerun()
+                                st.rerun()
                             
                             if st.button('Next (Normalize abnormal values)'):
                                 df_omloop = aanpassen_naar_gemiddeld(df_omloop, df_afstandsmatrix, energieverbruikrows)
@@ -140,7 +141,9 @@ def upload_validate_page():
                                 st.session_state['format_check'] = format_check
                                 st.session_state['page'] = 'Overview'
                                 st.session_state['bussen'] = bussen
-                                       
+                else:
+                    st.error(f'Timetable check failed: {reden}')
+                    
             else:
                 st.error(f"Error: Your timetable does not meet the required format.")
                 if not format_check_timetb[0]:
@@ -350,7 +353,7 @@ else:
     elif selected_page == 'Import New Excel':
         upload_validate_page()
         st.session_state['page'] = selected_page
-        st.experimental_rerun()
+        st.rerun()
     elif selected_page == "Bus Specific Schedule":
         Bus_Specific_Schedule()
     elif selected_page == 'Gantt Chart':
