@@ -1,7 +1,6 @@
 import pandas as pd
 from planning_generaliseren import scheduled_bus
 import numpy as np
-from Functie_to_class_format import check_dienstregeling
 
 
 def importeren(bestandsnaam:str='Connexxion data - 2023-2024.xlsx', sheetnaam1:str='Dienstregeling', sheetnaam2:str='Afstand matrix'):
