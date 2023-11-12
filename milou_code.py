@@ -54,29 +54,35 @@ for index, row in afstand.iterrows():
     verbruik_afstand.append(afstand_kilometer * 1.6)
 
 afstand['verbruik'] = verbruik_afstand
-bussen = []
-iteration = 0
-for row in dienstregeling.index:
-    #print(len(bussen))
-    solved = False
-    start_locatie = dienstregeling.loc[row, 'startlocatie']
-    vertrektijd = dienstregeling.loc[row, 'huidige tijd']
-    buslijn = dienstregeling.loc[row, 'buslijn']
-    eind_locatie = dienstregeling.loc[row, 'eindlocatie']
-    ### updaten locaties
-    for bus in bussen:
-        bus.location_match(start_locatie)
-        #print(bus.correct_location)
-    bussen.sort()
-    for bus in bussen:    
-        solved = bus.add_drive(Time=vertrektijd, First_location=start_locatie, Final_location= eind_locatie, Busline= buslijn)
-        if solved:
-            break
-    if not solved:
-        iteration += 1
-        nieuwe_bus = scheduled_bus(afstand, 270.0, omloop=iteration)
-        bussen.append(nieuwe_bus)
-        solved = nieuwe_bus.add_drive(Time=vertrektijd, First_location=start_locatie, Final_location= eind_locatie, Busline= buslijn)
+
+def create_planning(dienstregeling:pd.DataFrame, afstand:pd.DataFrame,batterijwaarde:float=270)->list:
+    ''' Maakt een planning op basis van de ingegeven dienstregeling en afstandsmatrix
+    volgt pseudo code zoals te vinden in pseudocode.txt
+    '''
+    bussen = []
+    iteration = 0
+    for row in dienstregeling.index:
+        #print(len(bussen))
+        solved = False
+        start_locatie = dienstregeling.loc[row, 'startlocatie']
+        vertrektijd = dienstregeling.loc[row, 'huidige tijd']
+        buslijn = dienstregeling.loc[row, 'buslijn']
+        eind_locatie = dienstregeling.loc[row, 'eindlocatie']
+        ### updaten locaties
+        for bus in bussen:
+            bus.location_match(start_locatie)
+            #print(bus.correct_location)
+        bussen.sort()
+        for bus in bussen:    
+            solved = bus.add_drive(Time=vertrektijd, First_location=start_locatie, Final_location= eind_locatie, Busline= buslijn)
+            if solved:
+                break
+        if not solved:
+            iteration += 1
+            nieuwe_bus = scheduled_bus(afstand, batterijwaarde, omloop=iteration)
+            bussen.append(nieuwe_bus)
+            solved = nieuwe_bus.add_drive(Time=vertrektijd, First_location=start_locatie, Final_location= eind_locatie, Busline= buslijn)
+    return bussen
 #print(afstand)
 #print(bussen[3].schedule)
 #print(len(bussen))
