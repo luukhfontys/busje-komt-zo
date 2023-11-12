@@ -290,6 +290,6 @@ df[['starttijd datum', 'eindtijd datum']] = df[['starttijd datum', 'eindtijd dat
 #print(check_dienstregeling(df_dienstregeling=dienstregeling, df_planning=df))
 print(len(bussen))
 
-df.to_excel('NieuwePlanning3.xlsx')
+#df.to_excel('OmloopplanningIdleop2Min.xlsx')
 
 
